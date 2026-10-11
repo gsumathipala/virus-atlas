@@ -1,0 +1,23 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Generated data. `python -m atlas.build` rebuilds atlas.json from the VMR,
+# and `python -m atlas.update --taxonomy` fetches the VMR itself, so neither
+# belongs in version control: atlas.json is 37 MB and is a pure function of
+# the spreadsheet plus the curated layers.
+data/atlas.json
+data/raw/*.xlsx
+
+# On-demand caches. All three refill themselves from public endpoints.
+data/evidence.sqlite
+data/surveillance.sqlite3
+data/genomic.sqlite3
+
+# Local tier corrections are the user's own data, not the project's.
+data/overrides.json
+
+# macOS
+.DS_Store
