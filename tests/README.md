@@ -1,0 +1,62 @@
+# Tests
+
+Thirteen suites that drive the running application in [jsdom][] and assert on
+the resulting DOM, plus the tooling used to look at the SVG the app produces.
+
+There is no browser in the environment this was built in, which shapes
+everything here. jsdom gives a real DOM, real CSS cascade and real JavaScript
+execution, so behaviour and computed styles can be checked — but it has **no
+layout engine**, so nothing here can tell you whether the page looks right at
+a given width. That gap is real and is stated in the main README too.
+
+## Running them
+
+```bash
+cd tests && npm install          # jsdom only
+python ../app.py &               # the suites drive a live server on :5057
+node smoke.js                    # ... or any other suite
+```
+
+Each exits non-zero if the page logged an error, so they work in a loop:
+
+```bash
+for t in smoke visibility isolate live figs radial split \
+         correct travel views genomic nav dx dxje; do
+  printf '%-11s ' $t; node $t.js >/dev/null 2>&1 && echo PASS || echo FAIL
+done
+```
+
+## What each one covers
+
+| Suite | Covers |
+| --- | --- |
+| `smoke` | Boot, tree expansion, search, sidebar render, no console errors |
+| `visibility` | Computed styles, not just the `hidden` property — written after a modal that `[hidden]` could not close |
+| `isolate` | Isolate nodes resolve to their species payload |
+| `live` | Europe PMC lookup and its cache |
+| `figs` | Every figure type emits valid geometry with no NaN |
+| `radial` | Open, re-root, depth change, up-a-rank, hover lineage, tip to article |
+| `split` | Top-level split mode: wedge count, real angular gaps, nothing within the hub |
+| `correct` | Tier correction round trip, persistence, rollup, revert |
+| `travel` | Destination query, route grouping, incubation windows, evidence grades |
+| `views` | Exactly one left-column panel visible across every transition |
+| `genomic` | Nextstrain build summaries, and absence handled quietly |
+| `nav` | Selecting a virus from search, travel, index or signals moves the tree |
+| `dx` | Differential panel, virology blocks, syndrome-chip loop |
+| `dxje` | Regression: a destination-specific virus must survive country filtering |
+
+## Tools
+
+`tools/` holds the visual-QA pipeline. `emit_docs.js` renders the app's SVG
+from a live page; `rasterize.py` inlines the stylesheet (svglib honours
+presentation attributes but not external CSS, custom properties or
+`color-mix()`) and `render_docs.py` turns the result into the PNGs in
+`docs/img`.
+
+This pipeline exists because structural assertions missed five real defects
+that were obvious the moment the figures were actually looked at: spikes drawn
+inside a particle, a filament rendered as a thin arc, labels over artwork, map
+geometry streaking across the antimeridian, and an icon that read as a spider
+rather than a sloth.
+
+[jsdom]: https://github.com/jsdom/jsdom

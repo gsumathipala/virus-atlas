@@ -1,0 +1,6 @@
+{
+  "name": "virus-atlas-tests",
+  "private": true,
+  "description": "jsdom suites driven against a running Virus Atlas server.",
+  "devDependencies": { "jsdom": "^24.0.0" }
+}
