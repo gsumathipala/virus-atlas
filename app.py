@@ -629,20 +629,21 @@ def _descend(node):
 def _resolve_country(text):
     """Match user input to a country in the travel index, via geo's aliases."""
     low = text.strip().lower()
-    for name in TRAVEL_BY_COUNTRY:
+    for name in geo.travel_names():
         if name.lower() == low:
             return name
     # geo.resolve understands aliases ("USA", "UK", "Viet Nam") and regions.
     countries, _worldwide, _m = geo.resolve(text)
+    known = geo.travel_names()
     for name in countries:
-        if name in TRAVEL_BY_COUNTRY:
+        if name in known:
             return name
     return None
 
 
 def _country_suggestions(text, limit=8):
     low = text.strip().lower()
-    return [c for c in sorted(TRAVEL_BY_COUNTRY) if low in c.lower()][:limit]
+    return [c for c in sorted(geo.travel_names()) if low in c.lower()][:limit]
 
 
 def _syndrome_tags(species):
@@ -836,7 +837,8 @@ def api_travel():
     country = (request.args.get("country") or "").strip()
     if not country:
         return jsonify({
-            "countries": sorted(TRAVEL_BY_COUNTRY),
+            # Every destination, not only those with a virus on record.
+            "countries": sorted(geo.travel_names()),
             "stats": TRAVEL_STATS,
             "routes": [{"key": k, "label": travel.ROUTE_LABEL.get(k, "Unclear")}
                        for k in travel.ROUTE_ORDER],
@@ -889,7 +891,7 @@ def api_differential():
             ],
             "routes": [{"key": k, "label": travel.ROUTE_LABEL.get(k, "Unclear")}
                        for k in travel.ROUTE_ORDER],
-            "countries": sorted(TRAVEL_BY_COUNTRY),
+            "countries": sorted(geo.travel_names()),
             "species_indexed": len(DX_BY_SPECIES),
         })
     if syndrome not in differential.SYNDROMES:

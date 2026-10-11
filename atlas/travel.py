@@ -341,10 +341,17 @@ def window_verdict(window, days):
     return "plausible"
 
 
-def query(by_country, worldwide, country, days=None, route=None):
-    """Assemble the travel answer for one country."""
+def query(by_country, worldwide, country, days=None, route=None, known=True):
+    """Assemble the travel answer for one country.
+
+    `known` says the name is a real destination; it is separate from whether
+    any virus is recorded there. Conflating the two made 14 countries --
+    New Zealand, Lebanon, Syria, Djibouti, Greenland among them -- report as
+    "country not found" when the honest answer is that nothing
+    destination-specific is on record and the cosmopolitan risks still apply.
+    """
     rows = list(by_country.get(country, []))
-    found = bool(rows)
+    found = known
 
     def decorate(entry):
         out = dict(entry)
