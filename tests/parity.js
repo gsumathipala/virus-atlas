@@ -19,8 +19,8 @@
 //   node parity.js
 //
 const { JSDOM } = require('jsdom');
-const STATIC = 'http://127.0.0.1:5070';
-const FLASK = 'http://127.0.0.1:5057';
+const STATIC = process.env.BASE || 'http://127.0.0.1:5070';
+const FLASK = process.env.FLASK || 'http://127.0.0.1:5057';
 
 // Ranks differ in shape, so cover every one of them, plus the three cases
 // that were broken: a family, a family-less genus and its species, an isolate.
