@@ -764,7 +764,10 @@ const F = (() => {
   async function world() {
     if (!WORLD) {
       // Absolute, so the fetch works regardless of the current document path.
-      const r = await fetch(new URL('/static/data/world.json', location.origin));
+      // Resolved against the document base, not the origin: the app is
+      // served from a subpath on GitHub Pages, and an origin-relative
+      // path there fetches the site's 404 page instead of the map.
+      const r = await fetch(new URL('static/data/world.json', document.baseURI));
       WORLD = await r.json();
     }
     return WORLD;

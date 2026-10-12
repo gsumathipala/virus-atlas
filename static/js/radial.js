@@ -434,7 +434,7 @@ const Radial = (() => {
     busy = true;
     el.classList.add('loading');
     try {
-      const url = new URL('/api/subtree', location.origin);
+      const url = new URL('api/subtree', document.baseURI);
       url.searchParams.set('id', id);
       url.searchParams.set('depth', depth);
       url.searchParams.set('fan', fan);

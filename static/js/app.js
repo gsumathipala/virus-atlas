@@ -25,7 +25,10 @@ let selected = null;
 const nodeEls = new Map();   // node id -> .tree-node element
 
 const api = (path, params) => {
-  const url = new URL(path, location.origin);
+  // Against the document base rather than the origin, so the app works
+  // when served from a subpath. A leading slash would reset to the
+  // root and undo that, so it is stripped.
+  const url = new URL(String(path).replace(/^\//, ''), document.baseURI);
   Object.entries(params || {}).forEach(([k, v]) => v != null && url.searchParams.set(k, v));
   return fetch(url).then(r => {
     if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
@@ -1000,8 +1003,8 @@ async function saveCorrection(form, { clear = false } = {}) {
   msg.textContent = clear ? 'Removing…' : 'Saving…';
   msg.className = 'correct-msg';
   try {
-    // Absolute, like every other call here: new URL(..., location.origin).
-    const url = new URL('/api/tier', location.origin);
+    // Resolved like every other call here, against the document base.
+    const url = new URL('api/tier', document.baseURI);
     let res;
     if (clear) {
       url.searchParams.set('id', id);
