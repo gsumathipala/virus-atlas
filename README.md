@@ -249,9 +249,14 @@ python3 -m venv .venv
 
 .venv/bin/python fetch_vmr.py      # download the current ICTV VMR spreadsheet
 .venv/bin/python build_world.py    # bake the world map into SVG paths
-.venv/bin/python -m atlas.build    # build data/atlas.json  (~35 MB, ~30 s)
-.venv/bin/python app.py            # http://127.0.0.1:5057
+.venv/bin/python -m atlas.build    # build data/atlas.json  (~37 MB, a few seconds)
+
+python3 app.py                     # http://127.0.0.1:5057
 ```
+
+The last line works with the plain system `python3`: `app.py` notices that
+Flask is missing, hands over to `.venv/bin/python` and carries on. Only when
+run as a script, so a WSGI server importing `app:app` is unaffected.
 
 `fetch_vmr.py` scrapes the ICTV download page for the newest Master Species
 List, so re-running the three commands after an ICTV ratification refreshes the

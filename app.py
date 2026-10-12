@@ -7,6 +7,34 @@ human-pathogenicity evidence.
 Run:  python app.py        (then open http://127.0.0.1:5057)
 """
 
+import os
+import sys
+
+# Running `python3 app.py` picks up the system interpreter, which has no
+# Flask: the dependencies live in this project's .venv. Rather than fail with
+# a bare ModuleNotFoundError, hand over to the virtualenv's interpreter and
+# carry on. Only when run as a script, and only when Flask is genuinely
+# missing, so a server that imports `app:app` (gunicorn) is never touched.
+if __name__ == "__main__":
+    try:
+        import flask as _flask_probe       # noqa: F401
+    except ModuleNotFoundError:
+        _root = os.path.dirname(os.path.abspath(__file__))
+        _venv_dir = os.path.join(_root, ".venv")
+        _venv = os.path.join(_venv_dir, "bin", "python")
+        # Compare sys.prefix, not the binary: a virtualenv's `python` is a
+        # symlink to the base interpreter, so realpath() makes the two look
+        # identical and the hand-over never happens. What distinguishes them
+        # is the prefix, which is what puts site-packages on the path.
+        if os.path.exists(_venv) and os.path.realpath(sys.prefix) != os.path.realpath(_venv_dir):
+            os.execv(_venv, [_venv, *sys.argv])
+        sys.exit(
+            "Flask is not installed for this interpreter and no virtualenv "
+            "was found at .venv\n\n"
+            "  python3 -m venv .venv\n"
+            "  .venv/bin/pip install -r requirements.txt\n"
+            "  python3 app.py\n")
+
 import json
 import re
 import unicodedata
