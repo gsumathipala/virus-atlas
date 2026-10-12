@@ -1,6 +1,6 @@
 // Travel panel, signals modal and pathogen index filter, driven through the DOM.
 const { JSDOM } = require('jsdom');
-const BASE='http://127.0.0.1:5057'; const errors=[];
+const BASE = process.env.BASE || 'http://127.0.0.1:5057'; const errors=[];
 (async()=>{
   const html=await (await fetch(BASE+'/')).text();
   const dom=new JSDOM(html,{url:BASE+'/',runScripts:'dangerously',resources:'usable',pretendToBeVisual:true,

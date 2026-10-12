@@ -1,6 +1,6 @@
 // Exercise the live-evidence panel in the sidebar.
 const { JSDOM } = require('jsdom');
-const BASE = 'http://127.0.0.1:5057';
+const BASE = process.env.BASE || 'http://127.0.0.1:5057';
 const errors = [];
 
 (async () => {

@@ -1,7 +1,7 @@
 // Split mode: at "All viruses" the lineages must be drawn apart, with no link
 // reaching the centre, and re-rooting into a realm must reconnect normally.
 const { JSDOM } = require('jsdom');
-const BASE = 'http://127.0.0.1:5057';
+const BASE = process.env.BASE || 'http://127.0.0.1:5057';
 const errors = [];
 
 (async () => {

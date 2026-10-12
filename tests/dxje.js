@@ -1,5 +1,5 @@
 const { JSDOM } = require('jsdom');
-const BASE='http://127.0.0.1:5057'; const errors=[];
+const BASE = process.env.BASE || 'http://127.0.0.1:5057'; const errors=[];
 (async()=>{
   const html=await (await fetch(BASE+'/')).text();
   const dom=new JSDOM(html,{url:BASE+'/',runScripts:'dangerously',resources:'usable',pretendToBeVisual:true,
@@ -27,7 +27,7 @@ const BASE='http://127.0.0.1:5057'; const errors=[];
       scope:t.querySelector('.trow-scope')?.textContent}));
     out[`${country}${days?' day '+days:''}`]={
       rendered:rows.length,
-      apiSaid:(await (await fetch(`${BASE}/api/differential?syndrome=encephalitis&country=${encodeURIComponent(country)}${days?'&days='+days:''}`)).json()).counts.total,
+      apiSaid:(await (await window.fetch(`${BASE}/api/differential?syndrome=encephalitis&country=${encodeURIComponent(country)}${days?'&days='+days:''}`)).json()).counts.total,
       JEpresent:rows.some(r=>/Japanese encephalitis/i.test(r.name||'')),
       names:rows.map(r=>r.name)};
   }

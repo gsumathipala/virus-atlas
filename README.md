@@ -233,13 +233,26 @@ Two constraints shape the configuration, both on the free plan:
 Pages serves files, not programs, so `python export_static.py` writes a
 `site/` directory: the same front end plus pre-rendered JSON, and a `fetch`
 interceptor (`static/js/static-api.js`) that answers `/api/...` from those
-files. 38 MB in 704 files, sharded by family so a page load fetches about
-10 KB rather than the whole atlas.
+files. 40 MB in 1,589 files, sharded by family — or by genus, in the lineages
+ICTV leaves without one — so a page load fetches a few kilobytes rather than
+the whole atlas. Isolates are not written at all: their metadata is already
+in the species record, so the browser rebuilds them from it.
 
 The live sources keep working, because Europe PMC, WHO, gov.uk and Nextstrain
 all send `access-control-allow-origin: *` — the browser calls them directly.
 What changes is that tier corrections go to `localStorage`, so they are
-per-browser and unshared, and nothing is cached between reloads.
+per-browser and unshared; nothing is cached between reloads; and the weekly
+ECDC threat-report link is absent, that being the one source that sends no
+CORS header and so cannot be read from a page at all.
+
+Everything else is answered exactly as Flask answers it, and `tests/parity.js`
+holds it to that: it drives both builds and diffs the JSON field by field.
+It exists because they had drifted badly without anyone noticing — the hosted
+copy was serving a trimmed record for every family, so a family page lost its
+virion figure and its roster of pathogenic species; 2,611 species in the
+family-less Caudoviricetes lineages were in no file at all and answered "not
+found"; and no isolate appeared anywhere. Every suite had only ever been run
+against Flask.
 
 ## Running it
 

@@ -1,6 +1,6 @@
 // Drive the tier correction control through the DOM.
 const { JSDOM } = require('jsdom');
-const BASE = 'http://127.0.0.1:5057';
+const BASE = process.env.BASE || 'http://127.0.0.1:5057';
 const errors = [];
 (async () => {
   const html = await (await fetch(BASE + '/')).text();
@@ -61,7 +61,7 @@ const errors = [];
   };
 
   // Server really stored it.
-  const stored = await (await fetch(BASE + '/api/corrections')).json();
+  const stored = await (await window.fetch(BASE + '/api/corrections')).json();
   R.storedOnServer = stored.corrections.find(c => c.species === 'Jeilongvirus ratti') || null;
 
   // Now remove it.
@@ -70,7 +70,7 @@ const errors = [];
   for (let i = 0; i < 40; i++) { if (q('.prov')?.dataset.basis !== 'override') break; await wait(300); }
   await wait(600);
   R.afterRevert = { basis: q('.prov')?.dataset.basis, badge: q('.hero .badge[data-tier]')?.getAttribute('data-tier') };
-  const after = await (await fetch(BASE + '/api/corrections')).json();
+  const after = await (await window.fetch(BASE + '/api/corrections')).json();
   R.remaining = after.corrections.length;
 
   console.log(JSON.stringify(R, null, 1));

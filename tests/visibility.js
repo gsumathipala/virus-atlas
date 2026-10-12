@@ -1,7 +1,7 @@
 // Check that everything the app hides via the `hidden` attribute actually
 // computes to display:none, and is visible again when shown.
 const { JSDOM } = require('jsdom');
-const BASE = 'http://127.0.0.1:5057';
+const BASE = process.env.BASE || 'http://127.0.0.1:5057';
 
 (async () => {
   const html = await (await fetch(BASE + '/')).text();

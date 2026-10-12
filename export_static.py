@@ -30,9 +30,12 @@ interface says so.
 Sharding
 --------
 The atlas is 40 MB, which nobody should download to look at one virus. Nodes
-are bundled by their family ancestor: 428 bundles, median 12 KB, fetched on
-demand. Ranks above family go in a skeleton that loads first, trimmed to what
-the tree actually needs to draw a row.
+are bundled by their family -- or, where ICTV assigns none, by their genus:
+1,311 bundles, median 2 KB, fetched on demand. Family rank and above go in a
+skeleton that loads first, so the whole upper tree and every group's page are
+answered without a second request. Isolates are in neither: the species
+record already carries their metadata, and the browser rebuilds the isolate
+nodes from it.
 """
 
 import json
@@ -64,6 +67,30 @@ def family_of(node_id):
     return None
 
 
+def bundle_root(node_id):
+    """The node whose bundle holds this one.
+
+    Normally its family. But ICTV leaves 884 genera -- nearly all of them
+    Caudoviricetes -- unassigned to any family, and the 2,611 species under
+    them need a bundle too, so those go under their nearest group ancestor,
+    which has no family either and is therefore in the skeleton. Keying on
+    the family alone left those species in no file at all, and every one of
+    their pages answered "not found".
+    """
+    parts = node_id.split("/")
+    fam = group = None
+    for i in range(1, len(parts) + 1):
+        anc = "/".join(parts[:i])
+        node = A.NODES.get(anc)
+        if node is None or anc == node_id:
+            continue
+        if node["rank"] == "family":
+            fam = anc
+        elif node["rank"] not in ("species", "isolate"):
+            group = anc
+    return fam or group
+
+
 def write(path, payload, label=None):
     path.parent.mkdir(parents=True, exist_ok=True)
     text = json.dumps(payload, separators=(",", ":"), ensure_ascii=False)
@@ -73,29 +100,8 @@ def write(path, payload, label=None):
     return len(text)
 
 
-def shallow_row(node):
-    """The minimum the tree needs to draw a row and know it has children."""
-    meta = node.get("meta") or {}
-    out = {
-        "id": node["id"],
-        "name": node["name"],
-        "rank": node["rank"],
-        "n_species": node.get("n_species", 0),
-        "top_tier": node.get("top_tier"),
-        "tiers": node.get("tiers", {}),
-        "has_children": any(A.NODES[c]["rank"] != "isolate"
-                            for c in node["children"]),
-    }
-    if node["rank"] == "species":
-        out["tier"] = meta.get("tier")
-        out["basis"] = meta.get("basis")
-        out["profiled"] = bool(meta.get("profiled"))
-        out["serogroup"] = meta.get("serogroup")
-        out["n_isolates"] = len(node["children"])
-    return out
-
-
 def main():
+    HOIST_KEYS.clear()
     if SITE.exists():
         shutil.rmtree(SITE)
     SITE.mkdir()
@@ -129,48 +135,71 @@ def main():
     total += write(api / "meta.json", meta, "meta.json")
 
     # -------------------------------------------------------------- skeleton
-    # Everything above family rank, shallow, plus each one's children.
+    # Family rank and above: the whole /api/node answer for each one, with
+    # children reduced to ids. This is the first thing the client loads, so a
+    # group's page -- its particle, its highlights, what it contains -- draws
+    # without fetching anything further.
+    #
+    # It used to hold a trimmed tree row instead, and because the client
+    # prefers the skeleton to the bundles, that trimmed row was what the
+    # family page was built from: Ampullaviridae lost its bottle-shaped
+    # virion, every group lost its roster of pathogenic species, and the
+    # contents list was handed bare id strings to render as rows.
+    tables = {k: {} for k in ("morphology", "baltimore", "biosafety",
+                              "receptors", "countermeasures", "therapeutics",
+                              "crossreact")}
     skeleton = {}
     for node in A.NODES.values():
         if node["rank"] in ("species", "isolate"):
             continue
         if family_of(node["id"]) and node["rank"] != "family":
             continue
-        skeleton[node["id"]] = {
-            **shallow_row(node),
-            "children": [c for c in node["children"]
-                         if A.NODES[c]["rank"] != "isolate"],
-            "note": node.get("note"),
-        }
+        rec = detail_for(node["id"], tables)
+        rec["children"] = [c["id"] for c in rec.get("children") or []]
+        skeleton[node["id"]] = rec
     total += write(api / "skeleton.json", skeleton, "skeleton.json")
 
     # --------------------------------------------------------------- bundles
-    # One file per family: every descendant node, in the full shape /api/node
-    # would have returned, so the client never needs a second request.
-    print("\nfamily bundles")
-    tables = {k: {} for k in ("morphology", "baltimore", "biosafety",
-                              "receptors", "countermeasures", "therapeutics",
-                              "crossreact")}
+    # One file per bundle root: every node under it, in the full shape
+    # /api/node would have returned, so the client never needs a second
+    # request once it has the file.
+    print("\nbundles")
     buckets = {}
     for node_id, node in A.NODES.items():
-        fam = family_of(node_id)
-        if fam is None or node["rank"] == "isolate":
+        # Isolates are reconstituted in the browser from the species record
+        # that already carries their metadata, and whatever is in the
+        # skeleton is already answered, so neither is written again here.
+        if node["rank"] == "isolate" or node_id in skeleton:
             continue
-        buckets.setdefault(fam, {})[node_id] = detail_for(node_id, tables)
+        root = bundle_root(node_id)
+        if root is None:
+            continue
+        buckets.setdefault(root, {})[node_id] = detail_for(node_id, tables)
+    # A file name per bundle root. Two roots can end in the same segment now
+    # that genera are roots too, and a case-insensitive file system would
+    # quietly merge them, so the names are made unique here.
+    names, taken = {}, set()
+    for root in buckets:
+        name, n = slug(root), 2
+        while name.lower() in taken:
+            name, n = f"{slug(root)}-{n}", n + 1
+        taken.add(name.lower())
+        names[root] = name
+
     sizes = []
-    for fam, nodes in buckets.items():
-        size = write(api / "bundle" / f"{slug(fam)}.json", nodes)
-        sizes.append((size, fam))
+    for root, nodes in buckets.items():
+        size = write(api / "bundle" / f"{names[root]}.json", nodes)
+        sizes.append((size, root))
         total += size
     sizes.sort(reverse=True)
     print(f"  {len(sizes)} bundles, {sum(s for s, _ in sizes)/1e6:.1f} MB")
     for s, f in sizes[:3]:
-        print(f"     largest: {slug(f):<28}{s/1024:>8.0f} KB")
+        print(f"     largest: {names[f]:<28}{s/1024:>8.0f} KB")
     med = sorted(s for s, _ in sizes)[len(sizes)//2]
     print(f"     median:  {med/1024:.0f} KB")
 
     # Which bundle holds a node: the client needs this to know what to fetch.
-    index = {fam: slug(fam) for fam in buckets}
+    index = dict(names)
     total += write(api / "bundle-index.json", index, "bundle-index.json")
     total += write(api / "tables.json", tables, "tables.json")
 
@@ -261,6 +290,33 @@ HOISTED = ("path", "id", "morphology", "baltimore", "biosafety",
            "receptors", "countermeasures", "therapeutics", "crossreact")
 
 
+HOIST_KEYS = {}
+
+
+def hoist(tables, field, prefer, value):
+    """Store `value` in a table once and return the key that reaches it.
+
+    Keyed by content, not by name; the name is only a preference, used when
+    free and otherwise suffixed. Keying on the name alone kept whichever
+    record arrived first and served it to everything else that shared the
+    name, and 47 families draw more than one particle -- the spec follows the
+    representative genome, and a family's genera do not all share one -- so
+    1,188 nodes were handed a sibling's virion and genome. `host-range` is a
+    basis rather than an answer and is one key for every host, which happens
+    to be harmless today and would not stay that way.
+    """
+    blob = json.dumps(value, sort_keys=True, ensure_ascii=False)
+    seen = HOIST_KEYS.setdefault(field, {})
+    if blob in seen:
+        return seen[blob]
+    key, n = prefer, 2
+    while key in tables[field]:
+        key, n = f"{prefer} ({n})", n + 1
+    tables[field][key] = value
+    seen[blob] = key
+    return key
+
+
 def detail_for(node_id, tables):
     """What /api/node returns, with the shared parts moved into tables."""
     with A.app.test_request_context(f"/api/node?id={node_id}"):
@@ -269,23 +325,23 @@ def detail_for(node_id, tables):
     name = rec["name"]
 
     if rec.get("morphology"):
-        # Key on the family, since the spec is a family property. Group nodes
-        # carry no meta.family, so fall back to the family ancestor in the
-        # path and only then to the node's own name -- otherwise every genus
-        # minted its own key and the table grew to 2,699 near-identical rows.
+        # Name the slot after the family, since architecture is a family
+        # property. Group nodes carry no meta.family, so fall back to the
+        # family ancestor in the path and only then to the node's own name --
+        # otherwise every genus minted its own key and the table grew to
+        # 2,699 near-identical rows.
         fam = meta.get("family")
         if not fam:
             anc = family_of(node_id)
             fam = A.NODES[anc]["name"] if anc else name
-        tables["morphology"].setdefault(fam, rec["morphology"])
-        rec["morphology_key"] = fam
+        rec["morphology_key"] = hoist(tables, "morphology", fam,
+                                      rec["morphology"])
     if rec.get("baltimore"):
-        key = rec["baltimore"].get("key") or "unassigned"
         # The caveat note is per-species; keep it, hoist the rest.
-        tables["baltimore"].setdefault(key, {k: v for k, v in
-                                             rec["baltimore"].items()
-                                             if k != "note"})
-        rec["baltimore_key"] = key
+        spec = {k: v for k, v in rec["baltimore"].items() if k != "note"}
+        rec["baltimore_key"] = hoist(tables, "baltimore",
+                                     rec["baltimore"].get("key")
+                                     or "unassigned", spec)
         if rec["baltimore"].get("note"):
             rec["baltimore_note"] = rec["baltimore"]["note"]
     # Biosafety answers at three levels and says which in `basis`. Keying all
@@ -293,18 +349,16 @@ def detail_for(node_id, tables):
     bs = rec.get("biosafety")
     if bs:
         basis = bs.get("basis")
-        key = (name if basis == "species"
-               else f"family:{bs.get('family') or meta.get('family')}"
-               if basis == "family" else "host-range")
-        tables["biosafety"].setdefault(key, bs)
-        rec["biosafety_ref"] = key
+        prefer = (name if basis == "species"
+                  else f"family:{bs.get('family') or meta.get('family')}"
+                  if basis == "family" else "host-range")
+        rec["biosafety_ref"] = hoist(tables, "biosafety", prefer, bs)
 
     for field in ("receptors", "countermeasures", "therapeutics",
                   "crossreact"):
         value = rec.get(field)
         if value:
-            tables[field][name] = value
-            rec[f"{field}_ref"] = name
+            rec[f"{field}_ref"] = hoist(tables, field, name, value)
 
     for field in HOISTED:
         rec.pop(field, None)

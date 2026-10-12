@@ -1,6 +1,6 @@
 # Tests
 
-Thirteen suites that drive the running application in [jsdom][] and assert on
+Seventeen suites that drive the running application in [jsdom][] and assert on
 the resulting DOM, plus the tooling used to look at the SVG the app produces.
 
 There is no browser in the environment this was built in, which shapes
@@ -26,6 +26,22 @@ for t in smoke visibility isolate live figs radial split \
 done
 ```
 
+### Against the static build
+
+Every suite takes `BASE`, so the same assertions can be run against the copy
+GitHub Pages serves rather than against Flask:
+
+```bash
+python ../export_static.py
+(cd ../site && python -m http.server 5070) &
+BASE=http://127.0.0.1:5070 node smoke.js
+```
+
+Do run them both ways. The two builds answer the same URLs from entirely
+different code, and for a long time only Flask was ever tested: the hosted
+copy was quietly serving a trimmed record for every family, no record at all
+for 2,611 species, and no isolates, and nothing here noticed.
+
 ## What each one covers
 
 | Suite | Covers |
@@ -44,6 +60,15 @@ done
 | `nav` | Selecting a virus from search, travel, index or signals moves the tree |
 | `dx` | Differential panel, virology blocks, syndrome-chip loop |
 | `dxje` | Regression: a destination-specific virus must survive country filtering |
+| `static` | The static build end to end: tree, search, radial, travel, differential, index |
+| `subpath` | The static build served from `/virus-atlas/`, as Pages serves it |
+| `parity` | Static and Flask answer the same JSON, field by field |
+
+`parity` is the one that needs both servers up at once — Flask on :5057 and
+the static build on :5070 — because it asks each the same questions and diffs
+the answers. Only a cache's age and state are allowed to differ, along with
+the ECDC link, which cannot be fetched from a browser at all because
+ecdc.europa.eu sends no CORS header.
 
 ## Tools
 

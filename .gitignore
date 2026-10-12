@@ -22,6 +22,6 @@ data/overrides.json
 # macOS
 .DS_Store
 
-# Static export for GitHub Pages: 38 MB of generated JSON, rebuilt by
+# Static export for GitHub Pages: 40 MB of generated JSON, rebuilt by
 # `python export_static.py`.
 site/

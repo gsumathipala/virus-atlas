@@ -1,7 +1,7 @@
 // Drive the Virus Atlas client in jsdom against the live Flask app.
 const { JSDOM } = require('jsdom');
 
-const BASE = 'http://127.0.0.1:5057';
+const BASE = process.env.BASE || 'http://127.0.0.1:5057';
 const errors = [];
 
 (async () => {
@@ -94,7 +94,7 @@ const errors = [];
   report.theme = doc.documentElement.dataset.theme;
 
   // --- a no-profile species still renders
-  const r2 = await (await fetch(BASE + '/api/search?q=Shoyavirus%20shoya')).json();
+  const r2 = await (await window.fetch(BASE + '/api/search?q=Shoyavirus%20shoya')).json();
   input.value = 'Shoyavirus shoya';
   input.dispatchEvent(new window.Event('input', { bubbles: true }));
   await wait(900);

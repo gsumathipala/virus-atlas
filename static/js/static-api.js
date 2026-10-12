@@ -23,7 +23,13 @@
  *                       straight from the page; all four send
  *                       access-control-allow-origin: *. Nothing is cached
  *                       between reloads, so a repeat lookup refetches.
+ *   ECDC                the one source that cannot be reached: it sends no
+ *                       CORS header, so the weekly threat-report link is
+ *                       absent from the signals panel here.
  *   Data freshness      the taxonomy is a snapshot taken at build time.
+ *
+ * Everything else is answered byte-for-byte as Flask answers it; tests/
+ * parity.js drives both and diffs them.
  */
 
 (function () {
@@ -120,22 +126,71 @@
   async function nodeRaw(id) {
     if (skeleton[id]) return skeleton[id];
     const b = await bundleFor(id);
-    return b ? b[id] : null;
+    if (b && b[id]) return b[id];
+    // An isolate: its id is its species' id plus /i<index>, and it shares its
+    // species' bundle.
+    const m = /^(.*)\/i(\d+)$/.exec(id);
+    if (!m) return null;
+    return isolateRecord((b && b[m[1]]) || await nodeRaw(m[1]), +m[2]);
   }
 
-  /** Put back what export_static.py hoisted into tables.json. */
+  /** An isolate node, rebuilt from its species record.
+   *
+   * Isolates are not exported, and do not need to be: the species record
+   * already carries each one's metadata in `isolates`, in index order, and an
+   * isolate's name is its first listed name. Writing all 19,285 of them again
+   * would have cost megabytes to say nothing new. */
+  function isolateRecord(species, index) {
+    if (!species || species.rank !== 'species') return null;
+    const meta = (species.isolates || [])[index];
+    if (!meta) return null;
+    return {
+      name: (meta.names || [])[0] || meta.designation || '',
+      rank: 'isolate', n_species: 0, tiers: {}, top_tier: null,
+      note: null, meta,
+    };
+  }
+
+  /* Fields the server always sends for a node of this rank, with the value
+     it sends when there is no record. The export drops an empty field, so it
+     is put back here: the application distinguishes "nothing known" from
+     "this rank has no such thing", and so does anything reading the JSON.
+     crossreact is a list of complexes, so its empty value is a list. */
+  const EMPTY = {
+    species: { morphology: null, baltimore: null, receptors: null,
+               biosafety: null, countermeasures: null, therapeutics: null,
+               crossreact: [] },
+    genus: { morphology: null, crossreact: [] },
+    serogroup: { morphology: null, crossreact: [] },
+    isolate: {},
+    group: { morphology: null },      // every other rank above species
+  };
+
+  /** Put back what export_static.py hoisted into tables.json.
+   *
+   * The reference fields are removed again afterwards: they are this file's
+   * bookkeeping, and leaving them on the record would be the one place the
+   * hosted copy's data differed in shape from the server's. */
   function rehydrate(id, rec) {
     if (!rec) return null;
     const out = { ...rec, id };
     if (rec.morphology_key) out.morphology = tables.morphology[rec.morphology_key];
     if (rec.baltimore_key) {
-      out.baltimore = { ...tables.baltimore[rec.baltimore_key] };
-      if (rec.baltimore_note) out.baltimore.note = rec.baltimore_note;
+      out.baltimore = { ...tables.baltimore[rec.baltimore_key],
+                        note: rec.baltimore_note ?? null };
     }
     for (const f of ['biosafety', 'receptors', 'countermeasures',
                      'therapeutics', 'crossreact']) {
       const ref = rec[`${f}_ref`];
       if (ref && tables[f][ref]) out[f] = tables[f][ref];
+    }
+    for (const k of ['morphology_key', 'baltimore_key', 'baltimore_note',
+                     'biosafety_ref', 'receptors_ref', 'countermeasures_ref',
+                     'therapeutics_ref', 'crossreact_ref']) {
+      delete out[k];
+    }
+    for (const [f, empty] of Object.entries(EMPTY[rec.rank] || EMPTY.group)) {
+      if (out[f] === undefined) out[f] = Array.isArray(empty) ? [] : empty;
     }
     return out;
   }
@@ -174,66 +229,106 @@
     return json({ ...m, static: true });
   };
 
+  /** A node as the tree draws it: the server's shallow(), reproduced.
+   *
+   * The counts matter more than they look. app.js calls a row a leaf when
+   * n_children is 0, so a row without the field is never a leaf and every
+   * isolate sprouts a disclosure arrow that opens on nothing. */
+  function row(id, rec, parentMeta) {
+    const r = applyOverride(rec);
+    const meta = r.meta || {};
+    const isolates = r.isolates || [];
+    const out = {
+      id, name: r.name, rank: r.rank,
+      n_children: r.rank === 'species'
+        ? isolates.length : (r.children || []).length,
+      n_species: r.n_species ?? 0,
+      top_tier: r.top_tier ?? null,
+      tiers: r.tiers || {},
+    };
+    if (r.rank === 'species') {
+      out.tier = meta.tier ?? null;
+      out.basis = meta.basis ?? null;
+      out.profiled = !!meta.profiled;
+      out.serogroup = meta.serogroup ?? null;
+      out.genome = meta.genome ?? null;
+      out.n_isolates = isolates.length;
+      const names = isolates.flatMap(m => (m && m.names) || []);
+      out.common = names.length ? names[0] : null;
+    } else if (r.rank === 'isolate') {
+      out.meta = meta;
+      // An isolate has no tier of its own; it shows its species'.
+      out.tier = (parentMeta || {}).tier ?? null;
+      out.common = (meta.abbrev || []).join('; ') || meta.designation || null;
+    }
+    return out;
+  }
+
+  /** sort_children: by name, with the Unassigned buckets last. */
+  const byName = (a, b) => {
+    const au = /^Unassigned/.test(a.name) ? 1 : 0;
+    const bu = /^Unassigned/.test(b.name) ? 1 : 0;
+    if (au !== bu) return au - bu;
+    const x = a.name.toLowerCase(), y = b.name.toLowerCase();
+    return x < y ? -1 : x > y ? 1 : 0;
+  };
+
+  /** The rows beneath a node. A species' are its isolates. */
+  async function childRows(id, raw) {
+    if (raw.rank === 'isolate') return [];
+    if (raw.rank === 'species') {
+      // Isolate ids follow the record's own order; the listing is sorted,
+      // as the server sorts it.
+      const meta = (applyOverride(raw) || {}).meta || {};
+      return (raw.isolates || [])
+        .map((m, i) => row(`${id}/i${i}`, isolateRecord(raw, i), meta))
+        .filter(Boolean)
+        .sort(byName);
+    }
+    const out = [];
+    for (const c of (raw.children || [])) {
+      const cid = typeof c === 'string' ? c : c && c.id;
+      if (!cid) continue;
+      const rec = await nodeRaw(cid);
+      if (rec) out.push(row(cid, rec));
+    }
+    return out;
+  }
+
   H['children'] = async p => {
     await boot();
     const id = p.get('id') || 'root';
-    const parent = skeleton[id] || rehydrate(id, await nodeRaw(id));
-    if (!parent) return json({ error: 'not found' }, 404);
-    // Two shapes reach here. The skeleton stores children as id strings;
-    // a group record lifted from a bundle stores them as the row objects
-    // /api/node returned. Normalise to ids rather than special-casing.
-    const ids = (parent.children || [])
-      .map(c => (typeof c === 'string' ? c : c && c.id))
-      .filter(Boolean);
-    const kids = [];
-    for (const cid of ids) {
-      const rec = skeleton[cid] || rehydrate(cid, await nodeRaw(cid));
-      if (!rec) continue;
-      const withOv = applyOverride(rec);
-      const meta = withOv.meta || {};
-      kids.push({
-        id: cid, name: rec.name, rank: rec.rank,
-        n_species: rec.n_species ?? 0,
-        top_tier: rec.top_tier, tiers: rec.tiers || {},
-        has_children: rec.has_children ?? !!(rec.children || []).length,
-        tier: rec.rank === 'species' ? (meta.tier ?? rec.tier) : undefined,
-        basis: rec.rank === 'species' ? (meta.basis ?? rec.basis) : undefined,
-        profiled: rec.profiled ?? !!meta.profiled,
-        serogroup: rec.serogroup ?? meta.serogroup,
-        n_isolates: rec.n_isolates,
-        common: rec.common,
-      });
-    }
-    return json({ id, children: kids });
+    const raw = await nodeRaw(id);
+    if (!raw) return json({ error: 'not found' }, 404);
+    return json({ id, children: await childRows(id, raw) });
   };
 
   H['node'] = async p => {
     await boot();
     const id = p.get('id') || '';
-    const raw = skeleton[id] ? { ...skeleton[id] } : await nodeRaw(id);
+    const raw = await nodeRaw(id);
     if (!raw) return json({ error: 'not found' }, 404);
     const rec = applyOverride(rehydrate(id, raw));
     rec.path = await ancestry(id);
-    if (!rec.children) rec.children = raw.children || [];
-    // groupDetail wants its children inline, the way the server sent them.
-    if (rec.rank !== 'species' && rec.rank !== 'isolate') {
-      const childIds = (raw.children || [])
-        .map(c => (typeof c === 'string' ? c : c && c.id))
-        .filter(Boolean);
-      const kids = [];
-      for (const cid of childIds) {
-        const k = skeleton[cid] || rehydrate(cid, await nodeRaw(cid));
-        if (k) {
-          const ov = applyOverride(k);
-          kids.push({
-            id: cid, name: k.name, rank: k.rank,
-            n_species: k.n_species ?? 0, top_tier: k.top_tier,
-            tier: (ov.meta || {}).tier ?? k.tier,
-            n_isolates: k.n_isolates, common: k.common,
-          });
-        }
+    if (rec.rank === 'species') {
+      delete rec.children;
+    } else if (rec.rank === 'isolate') {
+      // Clinical information lives on the species, and the server sends the
+      // species' record along so the isolate view has something to show.
+      const spId = id.split('/').slice(0, -1).join('/');
+      const sp = rehydrate(spId, await nodeRaw(spId));
+      if (sp) {
+        rec.species = {
+          id: spId, name: sp.name,
+          meta: (applyOverride(sp) || {}).meta ?? null,
+          isolates: sp.isolates || [],
+        };
+        rec.morphology = sp.morphology ?? null;
+        rec.geo = sp.geo ?? null;
       }
-      rec.kids = kids;
+    } else {
+      // groupDetail renders d.children itself, so these have to be rows.
+      rec.children = await childRows(id, raw);
     }
     return json(rec);
   };
@@ -259,9 +354,9 @@
         id, name: raw.name, rank: raw.rank,
         n_species: raw.n_species ?? 0,
         tier: raw.rank === 'species' ? (meta.tier ?? raw.tier) : raw.top_tier,
-        basis: meta.basis ?? raw.basis,
-        profiled: raw.profiled ?? !!meta.profiled,
-        serogroup: raw.serogroup ?? meta.serogroup,
+        basis: meta.basis ?? null,
+        profiled: !!meta.profiled,
+        serogroup: meta.serogroup ?? null,
         children: [], truncated: 0, has_more: false,
       };
       out[id] = rec;
@@ -410,9 +505,24 @@
         });
       }
     }
+    // What WHO and UKHSA are currently reporting from there, as the server
+    // attaches it: items whose title names the country and that matched a
+    // pathogen. A source that cannot be reached leaves the block out rather
+    // than failing the lookup.
+    let signals = [], sources = [];
+    try {
+      const live = await allSignals();
+      const low = match.toLowerCase();
+      sources = live.sources;
+      signals = live.signals
+        .filter(r => r.taxon && (r.title || '').toLowerCase().includes(low))
+        .slice(0, 12);
+    } catch { /* the exposure list is the answer; reporting is a bonus */ }
+
     const n = v => regional.filter(r => r.window === v).length;
     return json({
       ...base, asked: country, known_country: true,
+      signals, signal_sources: sources,
       days_since_return: days, route,
       regional, groups, worldwide: cosmo,
       counts: {
@@ -536,7 +646,23 @@
     });
   };
 
-  H['signals'] = async () => {
+  /* WHO Disease Outbreak News and UKHSA, fetched straight from the source
+     and classified against diseases.json. Memoised for the life of the page,
+     the way the server caches them, so the travel panel and the signals
+     panel do not each go and ask. */
+  let signalsOnce = null;
+  const allSignals = () => (signalsOnce = signalsOnce || signalsFetch());
+
+  /* surveil._strip: tags out, the handful of entities WHO and gov.uk emit
+     decoded, whitespace collapsed. Without it a summary kept its \r\n and
+     &nbsp; and no longer matched what the server sends. */
+  const strip = h => (h || '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>').replace(/&#39;/g, "'").replace(/&quot;/g, '"')
+    .replace(/\s+/g, ' ').trim();
+
+  async function signalsFetch() {
     const spec = await load('diseases.json');
     const compiled = spec.diseases.map(d => ({ ...d, re: new RegExp(d.rx, 'i') }));
     const nonViral = new RegExp(spec.non_viral, 'i');
@@ -552,7 +678,7 @@
         reports.push({
           source: 'WHO', title: (r.Title || '').trim(),
           date: (r.PublicationDateAndTime || '').slice(0, 10),
-          summary: (r.Summary || '').replace(/<[^>]+>/g, ' ').slice(0, 600),
+          summary: strip(r.Summary).slice(0, 600),
           url: `https://www.who.int/emergencies/disease-outbreak-news/item/${r.UrlName}`,
         });
       }
@@ -582,7 +708,7 @@
         reports.push({
           source: 'UKHSA', title,
           date: (r.public_timestamp || '').slice(0, 10),
-          summary: (r.description || '').slice(0, 600),
+          summary: strip(r.description).slice(0, 600),
           url: r.link && r.link.startsWith('http') ? r.link
             : 'https://www.gov.uk' + (r.link || ''),
         });
@@ -603,16 +729,23 @@
       }
       return { ...r, kind: nonViral.test(r.title) ? 'non-viral' : 'unmatched' };
     });
-    return json({
+    return {
       signals, sources,
+      // The server also probes for the week's ECDC threat report. That one
+      // cannot be done here: ecdc.europa.eu sends no access-control-allow-
+      // origin, so the browser is not allowed to read even the HEAD. The
+      // panel leaves the block out rather than inventing a link.
+      ecdc: null,
       counts: {
         total: signals.length,
         matched: signals.filter(s => s.taxon).length,
         non_viral: signals.filter(s => s.kind === 'non-viral').length,
         unmatched: signals.filter(s => s.kind === 'unmatched').length,
       },
-    });
-  };
+    };
+  }
+
+  H['signals'] = async () => json(await allSignals());
 
   H['genomic'] = async p => {
     await boot();
