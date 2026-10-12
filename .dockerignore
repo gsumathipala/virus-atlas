@@ -1,0 +1,12 @@
+.venv/
+.git/
+__pycache__/
+*.pyc
+site/
+tests/node_modules/
+docs/img/
+data/atlas.json
+data/raw/
+data/*.sqlite*
+data/overrides.json
+.DS_Store
