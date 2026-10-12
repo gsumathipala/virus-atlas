@@ -46,11 +46,31 @@
     return cache.get(path);
   }
 
-  const json = (body, status = 200) =>
-    new Response(JSON.stringify(body), {
+  /* A synthesized response.
+   *
+   * Browsers all provide the Response constructor, but depending on it meant
+   * the shim could not be exercised outside one -- jsdom has fetch but no
+   * Response -- and an untestable compatibility layer is the wrong thing to
+   * ship. So: use the real class where it exists, and otherwise return an
+   * object carrying the only four members the application reads (ok, status,
+   * json, text). */
+  const json = (body, status = 200) => {
+    const text = JSON.stringify(body);
+    if (typeof Response === 'function') {
+      return new Response(text, {
+        status,
+        headers: { 'content-type': 'application/json' },
+      });
+    }
+    return {
+      ok: status >= 200 && status < 300,
       status,
-      headers: { 'content-type': 'application/json' },
-    });
+      headers: { get: k => (k.toLowerCase() === 'content-type'
+        ? 'application/json' : null) },
+      json: async () => JSON.parse(text),
+      text: async () => text,
+    };
+  };
 
   const fold = s => (s || '').toLowerCase()
     .normalize('NFKD').replace(/[̀-ͯ]/g, '');
@@ -159,7 +179,12 @@
     const id = p.get('id') || 'root';
     const parent = skeleton[id] || rehydrate(id, await nodeRaw(id));
     if (!parent) return json({ error: 'not found' }, 404);
-    const ids = parent.children || [];
+    // Two shapes reach here. The skeleton stores children as id strings;
+    // a group record lifted from a bundle stores them as the row objects
+    // /api/node returned. Normalise to ids rather than special-casing.
+    const ids = (parent.children || [])
+      .map(c => (typeof c === 'string' ? c : c && c.id))
+      .filter(Boolean);
     const kids = [];
     for (const cid of ids) {
       const rec = skeleton[cid] || rehydrate(cid, await nodeRaw(cid));
@@ -192,8 +217,11 @@
     if (!rec.children) rec.children = raw.children || [];
     // groupDetail wants its children inline, the way the server sent them.
     if (rec.rank !== 'species' && rec.rank !== 'isolate') {
+      const childIds = (raw.children || [])
+        .map(c => (typeof c === 'string' ? c : c && c.id))
+        .filter(Boolean);
       const kids = [];
-      for (const cid of (raw.children || [])) {
+      for (const cid of childIds) {
         const k = skeleton[cid] || rehydrate(cid, await nodeRaw(cid));
         if (k) {
           const ov = applyOverride(k);
@@ -241,7 +269,9 @@
       let used = 1;
 
       const kidIds = [];
-      for (const cid of (raw.children || [])) {
+      for (const c of (raw.children || [])) {
+        const cid = typeof c === 'string' ? c : c && c.id;
+        if (!cid) continue;
         const k = skeleton[cid] || await nodeRaw(cid);
         if (k && k.rank !== 'isolate') kidIds.push([cid, k]);
       }
