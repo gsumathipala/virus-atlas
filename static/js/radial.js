@@ -1,3 +1,5 @@
+/*! Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+ *  Proprietary. No licence granted; see LICENSE. */
 /* Virus Atlas — radial taxonomy tree (D3).
  *
  * A circular cladogram of the ICTV hierarchy. Leaves sit on the outer ring,

@@ -1,4 +1,7 @@
-"""Travel-medicine view: what a returning traveller could have acquired.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Travel-medicine view: what a returning traveller could have acquired.
 
 The question this answers
 ------------------------

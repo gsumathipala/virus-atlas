@@ -1,3 +1,5 @@
+/*! Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+ *  Proprietary. No licence granted; see LICENSE. */
 /* ======================================================================
    Virus Atlas — design system
    Materials, depth and motion in the idiom of modern desktop software:
@@ -1917,3 +1919,22 @@ button { font: inherit; color: inherit; }
 .trow-scope[data-scope="regional"] {
   color: var(--accent); background: var(--accent-soft);
 }
+
+/* Attribution that survives a screenshot or a saved page. */
+.byline { color: var(--text-faint); }
+.copyright {
+  display: block; margin-top: 10px; padding-top: 10px;
+  border-top: 1px solid var(--border);
+  font-size: 11px; line-height: 1.6; color: var(--text-faint);
+}
+.copyright b { color: var(--text-dim); font-weight: 600; }
+.copyright a { color: var(--text-faint); text-decoration: underline; }
+.copyright a:hover { color: var(--accent); }
+.correct-warn {
+  margin: 0; padding: 9px 11px;
+  font-size: 11.5px; line-height: 1.55;
+  color: var(--t-probable);
+  background: color-mix(in srgb, var(--t-probable) 12%, transparent);
+  border-radius: var(--r-sm);
+}
+.correct-warn code { font-family: var(--mono); font-size: 10.5px; }

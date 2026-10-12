@@ -1,4 +1,7 @@
-"""Virion architecture per family, for the schematic figures.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Virion architecture per family, for the schematic figures.
 
 ICTV's VMR records taxonomy and genome type but not morphology, so this is a
 curated layer: for each family, the shape, envelope, surface projections,

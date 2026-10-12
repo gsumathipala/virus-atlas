@@ -1,4 +1,7 @@
-"""Serological cross-reactivity within serogroups and antigenic complexes.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Serological cross-reactivity within serogroups and antigenic complexes.
 
 Why this matters more than it looks
 -----------------------------------

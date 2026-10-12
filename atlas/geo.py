@@ -1,4 +1,7 @@
-"""Turn a profile's free-text `geography` field into map countries.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Turn a profile's free-text `geography` field into map countries.
 
 The profiles describe distribution the way the literature does -- "Amazon
 basin", "sub-Saharan Africa", "Fennoscandia" -- not as country codes. This

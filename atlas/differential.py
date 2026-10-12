@@ -1,4 +1,7 @@
-"""Syndrome-led search: work backwards from the presentation.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Syndrome-led search: work backwards from the presentation.
 
 The query this answers
 ----------------------

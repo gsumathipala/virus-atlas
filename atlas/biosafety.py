@@ -1,4 +1,7 @@
-"""Containment level, risk group and select-agent status.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Containment level, risk group and select-agent status.
 
 Why this is here
 ----------------

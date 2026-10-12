@@ -1,4 +1,7 @@
-"""Virus Atlas -- a browsable tree of ICTV virus taxonomy with serogroups and
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Virus Atlas -- a browsable tree of ICTV virus taxonomy with serogroups and
 human-pathogenicity evidence.
 
 Run:  python app.py        (then open http://127.0.0.1:5057)
@@ -16,7 +19,16 @@ from atlas import (baltimore, biosafety, countermeasures, crossreact,
                    differential, enrich, genomic, geo, morphology, overrides,
                    receptors, surveil, therapeutics, travel)
 
+import os
+
 ROOT = Path(__file__).resolve().parent
+
+# Set on hosts whose filesystem does not survive a restart (Render free plan,
+# most container platforms). Tier corrections are still written and still
+# work for the life of the instance; what changes is that they are lost when
+# it sleeps or redeploys, and the interface has to say so rather than
+# implying they are saved.
+EPHEMERAL = os.environ.get("EPHEMERAL_STORAGE") == "1"
 ATLAS_PATH = ROOT / "data" / "atlas.json"
 
 app = Flask(__name__)
@@ -280,6 +292,7 @@ def api_meta():
                 "crossreact": len(crossreact.COMPLEXES),
                 "syndromes": len(DX_BY_SPECIES),
                 "travel": TRAVEL_STATS,
+            "ephemeral": EPHEMERAL,
             },
             "roots": [shallow(NODES[c]) for c in sort_children(root["children"])],
         }

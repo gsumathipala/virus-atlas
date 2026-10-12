@@ -1,4 +1,7 @@
-"""Build atlas.json from the ICTV Virus Metadata Resource spreadsheet.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Build atlas.json from the ICTV Virus Metadata Resource spreadsheet.
 
 Produces a single nested tree:
 

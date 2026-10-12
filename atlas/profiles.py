@@ -1,4 +1,7 @@
-"""Curated human-pathogenicity profiles.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Curated human-pathogenicity profiles.
 
 Each profile is keyed by the ICTV species binomial. `names` lists the common
 virus names/abbreviations that fall under that species (the VMR often holds

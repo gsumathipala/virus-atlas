@@ -1,4 +1,7 @@
-"""Download the current ICTV Virus Metadata Resource spreadsheet.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Download the current ICTV Virus Metadata Resource spreadsheet.
 
 The VMR filename encodes the Master Species List release and date, so this
 scrapes the download page rather than hard-coding a URL that goes stale with

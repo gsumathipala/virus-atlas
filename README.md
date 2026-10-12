@@ -1,5 +1,9 @@
 # Virus Atlas
 
+> © 2026 **Saranga Sumathipala**. All rights reserved.
+> Proprietary software and datasets — see [LICENSE](LICENSE). No licence is
+> granted to use, copy, host, adapt or text-mine this work.
+
 A Flask tree visualiser for the complete ICTV virus taxonomy, overlaid with
 **serogroup assignments** and **human-pathogenicity evidence**.
 
@@ -199,6 +203,38 @@ Warm the cache ahead of time instead of on first view:
 
 A full run takes roughly 5–9 hours for all 17,554 species at polite rate
 limits, so `--genus` is usually the sensible unit.
+
+## Deploying
+
+### Render (runs the real application)
+
+The repository carries a [`render.yaml`](render.yaml) blueprint. Render builds
+the atlas at deploy time rather than serving a committed copy, so a redeploy
+picks up a new ICTV release.
+
+Two constraints shape the configuration, both on the free plan:
+
+* **One worker, not more.** The process holds the parsed atlas in memory, about
+  165 MB resident, against a 512 MB limit. A second worker would load a second
+  copy and the service would be OOM-killed. Concurrency comes from threads
+  instead, which suits work that is I/O-bound on upstream APIs.
+* **No persistent disk.** The filesystem is restored from the build on every
+  restart, and the service sleeps after 15 minutes idle. Tier corrections are
+  therefore lost when it wakes. `EPHEMERAL_STORAGE=1` makes the interface say
+  so rather than implying they are saved.
+
+### GitHub Pages (a static snapshot)
+
+Pages serves files, not programs, so `python export_static.py` writes a
+`site/` directory: the same front end plus pre-rendered JSON, and a `fetch`
+interceptor (`static/js/static-api.js`) that answers `/api/...` from those
+files. 38 MB in 704 files, sharded by family so a page load fetches about
+10 KB rather than the whole atlas.
+
+The live sources keep working, because Europe PMC, WHO, gov.uk and Nextstrain
+all send `access-control-allow-origin: *` — the browser calls them directly.
+What changes is that tier corrections go to `localStorage`, so they are
+per-browser and unshared, and nothing is cached between reloads.
 
 ## Running it
 

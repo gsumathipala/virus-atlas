@@ -1,4 +1,7 @@
-"""Keep the atlas current: check, fetch, rebuild, and report what changed.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Keep the atlas current: check, fetch, rebuild, and report what changed.
 
     python -m atlas.update --check          what is stale, change nothing
     python -m atlas.update --taxonomy       fetch the current ICTV VMR + rebuild

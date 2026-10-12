@@ -1,4 +1,7 @@
-"""Baltimore classification, derived from the ICTV genome field.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Baltimore classification, derived from the ICTV genome field.
 
 ICTV ranks describe relatedness. Baltimore groups describe *strategy*: what the
 genome is made of and therefore how it must get to mRNA. The two are

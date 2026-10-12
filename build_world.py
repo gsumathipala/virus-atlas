@@ -1,4 +1,7 @@
-"""Bake a world map into SVG paths for the distribution figures.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Bake a world map into SVG paths for the distribution figures.
 
 Source: Natural Earth 110m country boundaries, via the world-atlas TopoJSON
 build. Natural Earth is public domain.

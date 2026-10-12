@@ -1,4 +1,7 @@
-"""Serogroup / serocomplex / antigenic-clade assignments.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Serogroup / serocomplex / antigenic-clade assignments.
 
 ICTV taxonomy stops at species. For arboviruses the classical literature groups
 species into *serogroups* (cross-neutralisation / complement-fixation groups),

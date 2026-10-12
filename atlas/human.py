@@ -1,4 +1,7 @@
-"""Human-infection evidence for ICTV species, outside the curated profiles.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Human-infection evidence for ICTV species, outside the curated profiles.
 
 Why this file exists
 --------------------

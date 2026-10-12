@@ -1,4 +1,7 @@
-"""Antiviral therapy: what is licensed, what the trials showed, what is coming.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Antiviral therapy: what is licensed, what the trials showed, what is coming.
 
 Scope
 -----

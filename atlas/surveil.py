@@ -1,4 +1,7 @@
-"""Near-real-time outbreak signals, mapped onto the ICTV taxonomy.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Near-real-time outbreak signals, mapped onto the ICTV taxonomy.
 
 What this is
 ------------

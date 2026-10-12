@@ -1,3 +1,5 @@
+/*! Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+ *  Proprietary. No licence granted; see LICENSE. */
 /* Virus Atlas — figure engine.
  *
  * Every figure is an inline SVG built from data: no bitmaps, no external

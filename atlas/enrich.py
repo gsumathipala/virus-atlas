@@ -1,4 +1,7 @@
-"""Live literature lookup for species with no curated profile.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Live literature lookup for species with no curated profile.
 
 Europe PMC REST search (free, no API key, no account). Returns real papers --
 title, journal, year, authors, abstract snippet, DOI/PMID -- and flags which of

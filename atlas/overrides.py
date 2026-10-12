@@ -1,4 +1,7 @@
-"""User corrections to pathogenicity tiers, persisted to disk.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+User corrections to pathogenicity tiers, persisted to disk.
 
 The curated layers are incomplete by construction, so the interface has to let
 a reader fix a tier they know to be wrong. Corrections live in a single JSON

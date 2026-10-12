@@ -1,0 +1,69 @@
+Copyright © 2026 Saranga Sumathipala. All rights reserved.
+
+This software, its source code, its curated datasets and its documentation
+(together, "the Work") are the exclusive property of Saranga Sumathipala and
+are protected by copyright law and international copyright treaties.
+
+NO LICENCE IS GRANTED. No permission is given to any person to use, copy,
+modify, merge, publish, distribute, sublicense, sell, host, mirror, adapt,
+translate, reverse engineer, create derivative works from, or train any
+machine-learning or artificial-intelligence system on the Work, in whole or
+in part, by any means and in any medium, whether or not for commercial
+advantage, except with the prior express written permission of the copyright
+holder.
+
+Viewing this repository, or a deployed instance of it, does not grant any
+licence. Access to a private repository, or to a hosted instance, is granted
+for inspection only and may be withdrawn at any time.
+
+The curated datasets are asserted as original works of authorship. They
+include, without limitation, the human-pathogenicity profiles and reference
+assignments, the serogroup and antigenic-clade assignments, the virion
+morphology specifications, the receptor and tropism records, the biosafety
+and containment assignments, the countermeasure and antiviral-therapy
+records with their evidence grading, the serological cross-reactivity
+records, the geographic range and evidence-grade assignments, and the
+syndrome classification. These represent substantial independent selection,
+verification, arrangement and expression, and their extraction or re-use,
+including by automated means, is prohibited.
+
+THIRD-PARTY MATERIAL
+
+The copyright above extends only to the author's own work. The following are
+incorporated under their own terms and are NOT claimed by the author:
+
+  D3.js v7 (static/vendor/d3.v7.min.js)
+      Copyright 2010-2023 Mike Bostock. ISC Licence.
+      https://github.com/d3/d3/blob/main/LICENSE
+
+  Natural Earth (static/data/world.json, derived)
+      Public domain. https://www.naturalearthdata.com/about/terms-of-use/
+
+  ICTV Virus Metadata Resource (taxonomy and isolate records)
+      International Committee on Taxonomy of Viruses. https://ictv.global/vmr
+
+  Inter, Newsreader and JetBrains Mono (webfonts, loaded from Google Fonts)
+      SIL Open Font License 1.1.
+
+Data retrieved at runtime from Europe PMC, the World Health Organization,
+the UK Health Security Agency and Nextstrain remains the property of those
+bodies and is subject to their own terms.
+
+NO WARRANTY
+
+THE WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE WORK OR ITS USE.
+
+NOT MEDICAL ADVICE
+
+The Work is an educational reference. It is not clinical guidance, not a
+diagnostic tool, and not a prescribing resource. It must not be relied upon
+for the diagnosis, treatment or management of any person. Clinical decisions
+remain the responsibility of a qualified practitioner applying current local
+guidance.
+
+Enquiries: Saranga Sumathipala — tkgssumathipala@gmail.com

@@ -1,4 +1,7 @@
-"""Licensed vaccines, antivirals and immunoprophylaxis, per species.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Licensed vaccines, antivirals and immunoprophylaxis, per species.
 
 What this answers
 -----------------

@@ -1,3 +1,5 @@
+/*! Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+ *  Proprietary. No licence granted; see LICENSE. */
 /* Virus Atlas -- tree, search and the detail sidebar. */
 
 const SEED = 'root/riboviria/orthornavirae/negarnaviricota/polyploviricotina/bunyaviricetes/elliovirales/peribunyaviridae/orthobunyavirus/simbu-serogroup/manzanilla-clade/orthobunyavirus-catqueense';
@@ -18,6 +20,7 @@ const el = {
 };
 
 let TIERS = {};
+let EPHEMERAL = false;   // set from /api/meta: host without persistent disk
 let selected = null;
 const nodeEls = new Map();   // node id -> .tree-node element
 
@@ -300,10 +303,17 @@ function correctionForm(d, m) {
   return `
     <form class="correct" data-species="${esc(d.name)}" data-id="${esc(d.id)}">
       <p class="correct-intro">
-        Set the evidence tier for <i>${esc(d.name)}</i>. Corrections are stored
-        on this machine in <code>data/overrides.json</code>, keyed by species
-        name, and survive rebuilding the taxonomy from a new ICTV release.
+        Set the evidence tier for <i>${esc(d.name)}</i>. Corrections are keyed
+        by species name and survive rebuilding the taxonomy from a new ICTV
+        release.
       </p>
+      ${EPHEMERAL ? `<p class="correct-warn">
+        This instance has no persistent storage, so a correction lasts only
+        until the server restarts or sleeps. Keep a note of anything you want
+        to keep, or run the atlas locally, where it is written to
+        <code>data/overrides.json</code>.
+      </p>` : `<p class="correct-intro">Written to
+        <code>data/overrides.json</code> on the server.</p>`}
       <label>Tier<select name="tier">${opts}</select></label>
       <label>Why <span class="opt">(optional, shown in place of the inferred note)</span>
         <input name="note" type="text" maxlength="400" autocomplete="off"
@@ -1335,6 +1345,7 @@ document.addEventListener('pointermove', ev => {
 (async function boot() {
   const meta = await api('/api/meta');
   TIERS = meta.tiers;
+  EPHEMERAL = !!(meta.live && meta.live.ephemeral);
 
   el.legend.innerHTML = Object.entries(TIERS).map(([k, v]) =>
     `<span class="legend-item" title="${esc(v.note)}">

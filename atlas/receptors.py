@@ -1,4 +1,7 @@
-"""Entry receptors, attachment factors and cell tropism.
+"""Virus Atlas — © 2026 Saranga Sumathipala. All rights reserved.
+Proprietary. No licence granted; see LICENSE.
+
+Entry receptors, attachment factors and cell tropism.
 
 Why a virologist wants this
 ---------------------------

@@ -1,0 +1,33 @@
+# Render blueprint. https://render.com/docs/blueprint-spec
+#
+# The atlas is built at deploy time rather than committed: data/atlas.json is
+# 37 MB and is a pure function of the ICTV spreadsheet plus the curated
+# layers, so building it here keeps the repository small and makes a redeploy
+# pick up a new ICTV release.
+services:
+  - type: web
+    name: virus-atlas
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: |
+      pip install -r requirements.txt
+      python fetch_vmr.py
+      python build_world.py
+      python -m atlas.build
+    # ONE worker, deliberately. The process holds the parsed atlas in memory
+    # (~255 MB resident) and the free plan allows 512 MB, so a second worker
+    # would load a second copy and the service would be OOM-killed. Threads
+    # give concurrency instead; the work is I/O-bound on upstream APIs.
+    startCommand: gunicorn app:app --workers 1 --threads 8 --timeout 120 --bind 0.0.0.0:$PORT
+    healthCheckPath: /api/meta
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.6"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      # The free plan has no persistent disk, so tier corrections do not
+      # survive a restart. This makes the interface say so instead of
+      # implying they are saved.
+      - key: EPHEMERAL_STORAGE
+        value: "1"
