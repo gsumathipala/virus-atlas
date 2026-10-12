@@ -1,13 +1,6 @@
 ---
 title: Virus Atlas
-emoji: 🦠
-colorFrom: indigo
-colorTo: red
-sdk: docker
-app_port: 7860
-pinned: false
-license: other
-short_description: Browse every known virus, with the evidence for human infection
+
 ---
 
 # Virus Atlas
