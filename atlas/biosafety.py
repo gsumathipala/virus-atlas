@@ -68,7 +68,66 @@ RISK_GROUPS = {
 }
 
 
+# The United States select-agent lists, as data, so the per-species strings
+# cannot drift from them. From the HHS/USDA list at
+# https://www.selectagents.gov/sat/list.htm, read 2026-10-13. Keyed by ICTV
+# species; an entry covering a whole genus covers every species in it.
+#
+# Checked against this, four entries here were wrong: Hendra and Nipah were
+# marked HHS-only when they are overlap agents, which is a different
+# registration; eastern equine encephalitis virus was marked an overlap agent
+# restricted to the North American lineage when it is an HHS agent with no
+# subtype qualification; and mpox was marked without the Clade II exclusion,
+# which is the clade that caused the 2022 outbreak.
+SELECT_AGENTS = {
+    # HHS
+    "Orthonairovirus haemorrhagiae": "HHS select agent",
+    "Alphavirus eastern": "HHS select agent",
+    "Orthoebolavirus zairense": "HHS select agent",
+    "Orthoebolavirus sudanense": "HHS select agent",
+    "Orthoebolavirus bundibugyoense": "HHS select agent",
+    "Orthoebolavirus taiense": "HHS select agent",
+    "Orthoebolavirus restonense": "HHS select agent",
+    "Mammarenavirus lassaense": "HHS select agent",
+    "Mammarenavirus lujoense": "HHS select agent",
+    "Mammarenavirus chapareense": "HHS select agent",
+    "Mammarenavirus guanaritoense": "HHS select agent",
+    "Mammarenavirus juninense": "HHS select agent",
+    "Mammarenavirus machupoense": "HHS select agent",
+    "Mammarenavirus brazilense": "HHS select agent",
+    "Orthomarburgvirus marburgense": "HHS select agent",
+    "Orthopoxvirus monkeypox": "HHS select agent — Clade II excluded",
+    "Orthoflavivirus zilberi": "HHS select agent (Far Eastern and Siberian "
+                               "subtypes)",
+    "Orthoflavivirus kyasanurense": "HHS select agent",
+    "Orthoflavivirus omskense": "HHS select agent",
+    "Orthopoxvirus variola": "HHS select agent — possession restricted by WHO "
+                             "decision",
+    # Overlap: both HHS and USDA requirements apply.
+    "Henipavirus hendraense": "HHS/USDA overlap select agent",
+    "Henipavirus nipahense": "HHS/USDA overlap select agent",
+    "Phlebovirus riftense": "HHS/USDA overlap select agent",
+    "Alphavirus venezuelan": "HHS/USDA overlap select agent (epizootic "
+                             "subtypes IAB, IC)",
+}
+
+# On the list but not separately in this atlas: reconstructed 1918 influenza
+# virus, SARS-CoV and SARS-CoV/SARS-CoV-2 chimeras carrying SARS-CoV
+# virulence factors. ICTV places SARS-CoV and SARS-CoV-2 in one species, so
+# the species record notes the distinction rather than carrying a badge that
+# would imply SARS-CoV-2 work is itself regulated.
+
 def _b(species, **kw):
+    """Record a species' containment.
+
+    The select-agent badge comes from SELECT_AGENTS unless the entry states
+    one, so the badge and the regulation cannot drift apart. The batch below
+    shares one note across seventeen species, and sharing a select-agent
+    string the same way is what mislabelled Hendra and Nipah: they are
+    HHS/USDA overlap agents, which is a different registration.
+    """
+    if "select_agent" not in kw:
+        kw["select_agent"] = SELECT_AGENTS.get(species)
     BIOSAFETY[species] = kw
 
 
@@ -94,7 +153,7 @@ for sp, label in [
     ("Orthoflavivirus omskense", "Omsk haemorrhagic fever virus"),
     ("Orthoflavivirus kyasanurense", "Kyasanur Forest disease virus"),
 ]:
-    _b(sp, bsl=4, risk_group=4, select_agent="HHS select agent",
+    _b(sp, bsl=4, risk_group=4,
        bsl_note=f"{label}: high case fatality with no licensed treatment for "
                 "most, and documented person-to-person or nosocomial "
                 "transmission. Diagnostic PCR on inactivated material is "
@@ -109,7 +168,6 @@ _b("Orthopoxvirus variola", bsl=4, risk_group=4,
             "lawfully work at.")
 
 _b("Orthoebolavirus restonense", bsl=4, risk_group=4,
-   select_agent="HHS select agent",
    bsl_note="Reston virus causes no human disease, but is handled as a "
             "filovirus at BSL-4 because it is indistinguishable from the "
             "pathogenic ebolaviruses in practice and lethal in macaques.")
@@ -198,7 +256,7 @@ _b("Orthoflavivirus nilense", bsl=3, risk_group=3,
             "molecular diagnostics.")
 _b("Orthoflavivirus zilberi", bsl=3, risk_group=3,
    vaccine_offer="Tick-borne encephalitis vaccination required",
-   select_agent="HHS select agent (Far Eastern subtype) in the United States",
+   select_agent="HHS select agent (Far Eastern and Siberian subtypes)",
    bsl_note="The clearest example of jurisdiction mattering: the Far Eastern "
             "and Siberian subtypes are BSL-3 in Europe, where vaccination is "
             "expected and the virus is endemic, but are HHS select agents "
@@ -223,16 +281,16 @@ _b("Alphavirus venezuelan", bsl=3, risk_group=3,
             "many laboratory infections; the enzootic subtypes are excluded "
             "from select-agent status.")
 _b("Alphavirus eastern", bsl=3, risk_group=3,
-   select_agent="HHS/USDA overlap select agent (North American lineage)",
+   select_agent="HHS select agent",
    bsl_note="Eastern equine encephalitis virus: high case fatality and "
             "aerosol infectivity.")
 _b("Alphavirus western", bsl=3, risk_group=3, select_agent=None,
    bsl_note="Western equine encephalitis virus.")
 _b("Orthopoxvirus monkeypox", bsl=3, risk_group=3,
-   select_agent="HHS select agent",
+   select_agent="HHS select agent — Clade II excluded",
    vaccine_offer="Smallpox/mpox vaccination (MVA-BN) offered",
    bsl_note="Mpox virus propagation is BSL-3; clinical diagnostic PCR is "
-            "BSL-2. Clade I is the select agent of concern.")
+            "BSL-2. Clade I is the select agent; Clade II is excluded from the requirements by name, which is why the 2022 outbreak could be worked on without select-agent registration.")
 _b("Mammarenavirus choriomeningitidis", bsl=2, risk_group=2, select_agent=None,
    bsl_note="BSL-2 for diagnostic and routine work, escalating to BSL-3 for "
             "high-concentration propagation and to ABSL-3 for infected "

@@ -207,6 +207,55 @@ def findings(nodes, species_id):
                  f'page draws {spec["segments"]} segments; the accessions '
                  f'under it show {hint}')
 
+    # ---------------------------------------------------------- morphology
+    # Keys in the family table that no longer name a family. They are
+    # unreachable -- spec_for is only ever called with a family name out of
+    # the VMR -- so they are stale rather than harmful, but they look like
+    # coverage that is not there.
+    from atlas import morphology as _morph
+    fam_names = {n["name"] for n in nodes.values() if n["rank"] == "family"}
+    ranks = {n["name"]: n["rank"] for n in nodes.values()}
+    for key in sorted(_morph.FAMILIES):
+        if key not in fam_names:
+            was = ranks.get(key)
+            flag("morphology", key,
+                 f"is a {was}, not a family" if was else
+                 "names no family in this release of the taxonomy", "check")
+    # A family holding a human pathogen and drawing a generic particle.
+    for node in nodes.values():
+        if node["rank"] != "species":
+            continue
+        meta = node.get("meta") or {}
+        if meta.get("tier") in ("established", "probable") \
+                and meta.get("family") and meta["family"] not in _morph.FAMILIES:
+            flag("morphology", meta["family"],
+                 f"holds {node['name']}, an {meta['tier']} human pathogen, "
+                 "and has no particle of its own")
+
+    # ----------------------------------------------------------- biosafety
+    # Every select-agent badge against the regulation, in both directions. A
+    # badge on the wrong virus is a legal claim, and a missing one hides a
+    # registration duty.
+    from atlas import biosafety
+    for sp, rec in biosafety.BIOSAFETY.items():
+        claimed = rec.get("select_agent")
+        listed = biosafety.SELECT_AGENTS.get(sp)
+        if claimed and not listed:
+            flag("biosafety", sp,
+                 f"marked {claimed!r} but is not on the select-agent list")
+        elif listed and not claimed:
+            flag("biosafety", sp, f"is {listed!r} and carries no badge")
+        elif listed and claimed != listed:
+            flag("biosafety", sp,
+                 f"badge {claimed!r} does not match the list's {listed!r}")
+    for sp, listed in biosafety.SELECT_AGENTS.items():
+        if sp not in by_name:
+            flag("biosafety", sp,
+                 "select-agent list names a species not in this taxonomy")
+        elif sp not in biosafety.BIOSAFETY:
+            flag("biosafety", sp,
+                 f"is {listed!r} but has no species-level containment record")
+
     # -------------------------------------------------------- differential
     for key, info in differential.SYNDROMES.items():
         for field in ("label", "note"):

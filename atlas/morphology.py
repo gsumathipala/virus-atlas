@@ -158,6 +158,22 @@ FAMILIES = {
         nm=[40, 60], segments=1, kb=11,
         genes=["C", "prM", "E", "NS1", "NS2A/B", "NS3", "NS4A/B", "NS5"],
         note="A smooth envelope with E glycoprotein lying flat in a herringbone lattice rather than projecting spikes. One long polyprotein is cleaved into three structural and seven non-structural proteins."),
+    # Hepaciviridae split out of Flaviviridae, and had no spec of its own, so
+    # hepatitis C -- an established human pathogen with 50 million chronic
+    # infections -- was drawn from the generic ssRNA(+) particle.
+    "Hepaciviridae": dict(
+        shape="spherical", envelope=True, spikes="spike", capsid="icosahedral",
+        nm=[50, 80], segments=1, kb=9.6,
+        genes=["core", "E1", "E2", "p7", "NS2", "NS3", "NS4A", "NS4B",
+               "NS5A", "NS5B"],
+        note="Unusually ill-defined for a virus this well studied: hepatitis C "
+             "circulates bound to host lipoproteins as a lipoviroparticle, so "
+             "its density varies, its diameter is reported across a wide "
+             "range, and no high-resolution structure of the whole virion "
+             "exists. E1/E2 heterodimers form the spikes, and the single "
+             "polyprotein is cleaved into three structural and seven "
+             "non-structural proteins -- NS3/4A and NS5A and NS5B being the "
+             "targets of the drugs that cure it."),
     "Togaviridae": dict(
         shape="spherical", envelope=True, spikes="spike", capsid="icosahedral",
         nm=[60, 70], segments=1, kb=12,
