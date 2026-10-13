@@ -83,6 +83,33 @@
 
   const esc = s => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+  /* Where `form` appears in `hay` not glued to another letter -- Python's
+     (?<![a-z])form(?![a-z]). Written by hand rather than as a regex because
+     lookbehind is missing from Safari before 16.4, and a thrown regex would
+     have taken the whole destination lookup with it. */
+  function formHits(hay, form) {
+    const letter = /[a-z]/;
+    const at = [];
+    for (let i = hay.indexOf(form); i !== -1; i = hay.indexOf(form, i + 1)) {
+      const before = i === 0 ? '' : hay[i - 1];
+      const after = hay[i + form.length] || '';
+      if (!letter.test(before) && !letter.test(after)) at.push(i);
+    }
+    return at;
+  }
+
+  const containsForm = (hay, form) => formHits(hay, form).length > 0;
+
+  /** `hay` with every boundary-respecting occurrence of `form` blanked out. */
+  function maskForm(hay, form) {
+    const fill = '\u00b7'.repeat(form.length);
+    let out = hay;
+    for (const i of formHits(hay, form).reverse()) {
+      out = out.slice(0, i) + fill + out.slice(i + form.length);
+    }
+    return out;
+  }
+
   /* --------------------------------------------------- node reconstruction */
 
   let skeleton = null, bundleIndex = null, tables = null;
@@ -193,6 +220,21 @@
       if (out[f] === undefined) out[f] = Array.isArray(empty) ? [] : empty;
     }
     return out;
+  }
+
+  /* geo.destinations_in: the destinations a piece of text names outright,
+     longest surface form first with each match masked out, so "Democratic
+     Republic of the Congo" cannot also count as Congo. Region phrases are
+     not consulted -- "WHO Eastern Mediterranean Region" in a headline is not
+     a report about Bahrain. */
+  function namesDestination(text, want, forms) {
+    let low = (text || '').toLowerCase();
+    for (const [form, country] of Object.entries(forms || {})) {
+      if (!containsForm(low, form)) continue;
+      if (country === want) return true;
+      low = maskForm(low, form);
+    }
+    return false;
   }
 
   /* ------------------------------------------------------- tier overrides */
@@ -464,13 +506,24 @@
     const index = await load('travel-index.json');
     if (!country) return json(index);
 
-    const match = index.countries.find(c =>
-      c.toLowerCase() === country.toLowerCase());
+    // app._resolve_country, reproduced: a name, an alias, a subnational
+    // place, or a longer phrase containing one. The forms arrive longest
+    // first, so Guinea cannot win inside Papua New Guinea.
+    const low = country.toLowerCase();
+    const forms = index.forms || {};
+    let match = forms[low];
+    const region = match ? null : (index.regions || {})[low];
+    if (!match && !region) {
+      for (const [form, name] of Object.entries(forms)) {
+        if (containsForm(low, form)) { match = name; break; }
+      }
+    }
     if (!match) {
-      const low = country.toLowerCase();
       return json({
         country, known_country: false, asked: country,
-        suggestions: index.countries.filter(c => c.toLowerCase().includes(low)).slice(0, 8),
+        region: region ? country : null,
+        suggestions: region ? region.slice(0, 12)
+          : index.countries.filter(c => c.toLowerCase().includes(low)).slice(0, 8),
         regional: [], groups: [], worldwide: [], counts: {},
       });
     }
@@ -512,10 +565,9 @@
     let signals = [], sources = [];
     try {
       const live = await allSignals();
-      const low = match.toLowerCase();
       sources = live.sources;
       signals = live.signals
-        .filter(r => r.taxon && (r.title || '').toLowerCase().includes(low))
+        .filter(r => r.taxon && namesDestination(r.title, match, forms))
         .slice(0, 12);
     } catch { /* the exposure list is the answer; reporting is a bonus */ }
 
@@ -567,9 +619,11 @@
             scope: f.scope,
           };
         });
-      } else {
-        rows = [];
       }
+      // An unresolvable destination leaves the country filter unapplied, as
+      // the server leaves it: known_country says so and the panel prints it.
+      // Returning nothing instead claimed the presentation had no candidates
+      // anywhere, which is a different and false statement.
     }
     if (route) rows = rows.filter(r => (r.routes || []).includes(route));
     if (days != null) {

@@ -16,6 +16,7 @@ distribution, which is what such a figure can honestly claim.
 
 import json
 import re
+from functools import lru_cache
 from pathlib import Path
 
 WORLD = Path(__file__).resolve().parent.parent / "static" / "data" / "world.json"
@@ -179,6 +180,24 @@ ALIASES = {
     "burma": "Myanmar",
     "east timor": "Timor-Leste",
     "north macedonia": "Macedonia",
+
+    # Names a person actually types into a destination box, and the forms
+    # WHO and UKHSA use in their report titles. Added after "USA", "UK",
+    # "Viet Nam" and "England" all failed on the hosted copy: alias
+    # resolution was a server-side nicety the static build never had.
+    "viet nam": "Vietnam",
+    "türkiye": "Turkey",
+    "turkiye": "Turkey",
+    "russian federation": "Russia",
+    "macau": "Macao",
+    "png": "Papua New Guinea",
+    "west bank": "Palestine",
+    "gaza": "Palestine",
+    "england": "United Kingdom",
+    "scotland": "United Kingdom",
+    "wales": "United Kingdom",
+    "northern ireland": "United Kingdom",
+    "u.s.a.": "United States of America",
 
     "usa": "United States of America",
     "u.s.": "United States of America",
@@ -361,6 +380,68 @@ def travel_names():
     is the set a person can actually have travelled to.
     """
     return world_names() | set(OFFMAP)
+
+
+@lru_cache(maxsize=1)
+def destination_forms():
+    """Every spelling that names exactly one destination.
+
+    Country names, the aliases, and the subnational places that stand for a
+    country ("Kerala" -> India), lowercased, longest first so a longer form
+    is tried before a shorter one it contains. This is the resolution a
+    destination box needs, and it is deliberately NOT the region phrases:
+    "West Africa" names fifteen countries, not one.
+    """
+    names = travel_names()
+    forms = {n.lower(): n for n in names}
+    for table in (ALIASES, PLACES):
+        for form, country in table.items():
+            if country in names:
+                forms.setdefault(form.lower(), country)
+    return dict(sorted(forms.items(), key=lambda kv: -len(kv[0])))
+
+
+@lru_cache(maxsize=1)
+def destination_regions():
+    """Region phrases and the destinations each covers."""
+    names = travel_names()
+    out = {}
+    for phrase, members in REGIONS.items():
+        kept = [c for c in members if c in names]
+        if kept:
+            out[phrase.lower()] = sorted(kept)
+    out["tropics"] = sorted(c for c in TROPICAL_BELT if c in names)
+    out["subtropics"] = out["tropics"]
+    return out
+
+
+@lru_cache(maxsize=8192)
+def destinations_in(text):
+    """Destinations named outright in a piece of text.
+
+    Longest surface form first, each match masked out, so a shorter name
+    cannot also match inside a longer one: without it a WHO headline about the
+    Democratic Republic of the Congo also counted as one about Congo.
+
+    Region phrases are deliberately not consulted. "WHO Eastern Mediterranean
+    Region" in a headline is not a report about Bahrain, and treating it as
+    one put four reports on each of a dozen country pages.
+
+    Used to decide which outbreak reports name a destination. Comparing the
+    destination's own spelling against the title missed every report about
+    `Dem. Rep. Congo`, which WHO writes out in full -- 20 of them, during an
+    Ebola outbreak there.
+    """
+    low = (text or "").lower()
+    found = []
+    for form, country in destination_forms().items():
+        if country in found:
+            continue
+        pattern = rf"(?<![a-z]){re.escape(form)}(?![a-z])"
+        if re.search(pattern, low):
+            found.append(country)
+            low = re.sub(pattern, lambda m: "\u00b7" * len(m.group(0)), low)
+    return tuple(found)
 
 
 def is_mappable(country):

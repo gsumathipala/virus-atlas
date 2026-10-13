@@ -1423,13 +1423,19 @@ function travelRow(e) {
 function renderTravel(d) {
   const out = document.getElementById('travel-out');
   if (!d.known_country) {
-    out.innerHTML = `
-      <p class="travel-hint">No country in the index matches
-        “${esc(d.asked || d.country || '')}”.
-        ${d.suggestions?.length
-          ? `Did you mean ${d.suggestions.map(s =>
-              `<button class="link" type="button" data-country="${esc(s)}">${esc(s)}</button>`
-            ).join(', ')}?` : ''}</p>`;
+    const pick = (d.suggestions || []).map(s =>
+      `<button class="link" type="button" data-country="${esc(s)}">${esc(s)}</button>`
+    ).join(', ');
+    // A region is a different answer from a typo: the atlas knows the phrase,
+    // it just covers many destinations. Saying "no match" and then listing
+    // them read as a spelling correction.
+    out.innerHTML = d.region
+      ? `<p class="travel-hint">“${esc(d.region)}” is a region, not a
+           destination — exposure differs across it. Pick one:
+           ${pick}${d.suggestions?.length >= 12 ? ', …' : ''}</p>`
+      : `<p class="travel-hint">No country in the index matches
+          “${esc(d.asked || d.country || '')}”.
+          ${pick ? `Did you mean ${pick}?` : ''}</p>`;
     return;
   }
   const c = d.counts;

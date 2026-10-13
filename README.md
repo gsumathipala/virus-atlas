@@ -364,14 +364,23 @@ Beyond the profile, each species page carries whatever of these applies:
 
 - **Travel exposure** — viruses reported from a destination, grouped by
   exposure route, with incubation windows filtered against days since return.
-  239 destinations, which is wider than the 177 the map can draw: small island
+  242 destinations, which is wider than the 177 the map can draw: small island
   states have no Natural Earth polygon and are carried separately in
-  `atlas/geo.py:OFFMAP`.
+  `atlas/geo.py:OFFMAP`. The destination box takes 319 spellings, not 242:
+  aliases (`USA`, `UK`, `Viet Nam`, `Türkiye`, `Ivory Coast`, `DRC`),
+  constituent countries (`England`, `Scotland`, `Wales`), subnational places
+  (`Kerala` → India) and a phrase containing one. A region phrase is not
+  silently resolved to a country: `West Africa` used to answer about Benin
+  and `worldwide` about Afghanistan, so a region now comes back as a region
+  with its destinations offered.
 - **Differential by presentation** — 16 syndromes over 174 species, narrowed
   by destination, route and time since return. A keyword match over curated
   prose, not a clinical decision aid.
-- **Signals** — WHO Disease Outbreak News, matched to the taxonomy where
-  possible. A record of what WHO has reported, not incidence.
+- **Signals** — WHO Disease Outbreak News and UKHSA, matched to the taxonomy
+  where possible. A record of what has been reported, not incidence. A report
+  counts for a destination when the title *names* it, resolved the same way:
+  matching the destination's own spelling missed all 20 reports from the
+  Ebola outbreak in `Dem. Rep. Congo`, which WHO writes out in full.
 
 ## Keeping it current
 

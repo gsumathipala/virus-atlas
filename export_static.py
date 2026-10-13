@@ -228,10 +228,16 @@ def main():
 
     # Travel: one file per destination, plus the picker list.
     dests = sorted(geo.travel_names())
+    # The destination box accepts aliases, subnational places and region
+    # phrases, and resolving them was a server-side nicety the browser never
+    # had: "USA", "UK", "England" and "Viet Nam" all came back "not found"
+    # here while working locally. Ship the resolution with the index.
     total += write(api / "travel-index.json",
                    {"countries": dests, "stats": A.TRAVEL_STATS,
                     "routes": [{"key": k, "label": travel.ROUTE_LABEL.get(k, "Unclear")}
-                               for k in travel.ROUTE_ORDER]},
+                               for k in travel.ROUTE_ORDER],
+                    "forms": geo.destination_forms(),
+                    "regions": geo.destination_regions()},
                    "travel-index.json")
     total += write(api / "travel-worldwide.json", A.TRAVEL_WORLDWIDE,
                    "travel-worldwide.json")

@@ -47,7 +47,21 @@ const URLS = [
   '/api/search?q=ampulla',
   '/api/pathogens',
   '/api/travel?country=Sri%20Lanka&days=11',
+  // Destination resolution. These are the inputs that worked on the server
+  // and failed on the hosted copy, because alias resolution lived in Flask:
+  // an alias, a constituent country, WHO's spelling, a subnational place, a
+  // region phrase, and something that is none of them.
+  '/api/travel?country=USA',
+  '/api/travel?country=UK',
+  '/api/travel?country=England',
+  '/api/travel?country=Viet%20Nam',
+  '/api/travel?country=Ivory%20Coast',
+  '/api/travel?country=Kerala',
+  '/api/travel?country=West%20Africa',
+  '/api/travel?country=Atlantis',
   '/api/differential?syndrome=encephalitis&country=Sri%20Lanka',
+  '/api/differential?syndrome=encephalitis&country=USA',
+  '/api/differential?syndrome=encephalitis&country=Atlantis',
   '/api/corrections',
 ];
 

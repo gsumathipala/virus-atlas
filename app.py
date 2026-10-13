@@ -687,18 +687,31 @@ def _descend(node):
 
 
 def _resolve_country(text):
-    """Match user input to a country in the travel index, via geo's aliases."""
+    """Match user input to one destination: a name, an alias, or a place.
+
+    Returns (destination, region_members). Exactly one of them is set.
+
+    It used to fall through to geo.resolve, which also understands region
+    phrases and hands back every country in them -- and this took the first.
+    "West Africa" therefore resolved to Benin, "South America" to Argentina
+    and "worldwide" to Afghanistan: a confident answer about one country the
+    person had not asked about. A region now comes back as a region.
+    """
     low = text.strip().lower()
-    for name in geo.travel_names():
-        if name.lower() == low:
-            return name
-    # geo.resolve understands aliases ("USA", "UK", "Viet Nam") and regions.
-    countries, _worldwide, _m = geo.resolve(text)
-    known = geo.travel_names()
-    for name in countries:
-        if name in known:
-            return name
-    return None
+    forms = geo.destination_forms()
+    hit = forms.get(low)
+    if hit:
+        return hit, None
+    members = geo.destination_regions().get(low)
+    if members:
+        return None, members
+    # A longer input that contains a destination name: "travelling to Kerala",
+    # "Lanka trip". Longest form first, so Guinea cannot win inside Papua New
+    # Guinea.
+    for form, country in forms.items():
+        if re.search(rf"(?<![a-z]){re.escape(form)}(?![a-z])", low):
+            return country, None
+    return None, None
 
 
 def _country_suggestions(text, limit=8):
@@ -904,11 +917,16 @@ def api_travel():
                        for k in travel.ROUTE_ORDER],
         })
 
-    # Accept an alias or any casing: "usa", "UK", "viet nam".
-    name = _resolve_country(country)
+    # Accept an alias or any casing: "usa", "UK", "viet nam", "England".
+    name, region = _resolve_country(country)
     if name is None:
         return jsonify({"country": country, "known_country": False,
-                        "suggestions": _country_suggestions(country),
+                        # What they typed, which is what the hint should
+                        # quote back; the success path already sends it.
+                        "asked": country,
+                        "region": country if region else None,
+                        "suggestions": region[:12] if region
+                        else _country_suggestions(country),
                         "regional": [], "groups": [], "worldwide": [],
                         "counts": {}}), 200
 
@@ -922,13 +940,16 @@ def api_travel():
                        request.args.get("route") or None)
     out["asked"] = country
 
-    # Attach current reporting for this country, newest first.
+    # Attach current reporting for this country, newest first. Matched by
+    # resolving the names in the title, not by looking for the destination's
+    # own spelling in it: WHO writes "Democratic Republic of the Congo" and
+    # the destination is "Dem. Rep. Congo", so that test found none of the 20
+    # reports from an Ebola outbreak there.
     reports, sources = surveil.all_signals()
-    low = name.lower()
     out["signals"] = [
         {**r, "node": SPECIES_ID.get(r.get("taxon")) or GROUP_ID.get(r.get("taxon"))}
         for r in reports
-        if low in r["title"].lower() and r.get("taxon")
+        if r.get("taxon") and name in geo.destinations_in(r["title"])
     ][:12]
     out["signal_sources"] = sources
     return jsonify(out)
@@ -967,7 +988,7 @@ def api_differential():
 
     travel_rows, resolved = None, None
     if country:
-        resolved = _resolve_country(country)
+        resolved, _region = _resolve_country(country)
         if resolved:
             got = travel.query(TRAVEL_BY_COUNTRY, TRAVEL_WORLDWIDE,
                                resolved, days, None)
