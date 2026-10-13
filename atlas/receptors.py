@@ -171,8 +171,13 @@ _r("Orthoflavivirus denguei",
    entry="Clathrin-mediated endocytosis, low-pH E-mediated fusion.",
    note="No single high-affinity receptor is established, which matters: entry "
         "via Fcγ receptors on monocytes during antibody-dependent enhancement "
-        "is the mechanism behind severe secondary dengue, and is why both "
-        "licensed vaccines are restricted by serostatus.")
+        "is the mechanism behind severe secondary dengue, and is what the "
+        "licensed vaccines have to be positioned around. Dengvaxia is given "
+        "only to people with confirmed prior dengue infection. Qdenga needs no "
+        "pre-vaccination screening — its EU indication is simply everyone from "
+        "4 years of age — but WHO restricts programmatic use to high-"
+        "transmission settings, because efficacy against DENV-3 and DENV-4 in "
+        "the seronegative is less certain.")
 
 _r("Orthoflavivirus zikaense",
    receptors=["AXL", "TIM-1", "DC-SIGN"],
@@ -191,7 +196,7 @@ _r("Orthoflavivirus flavi", receptors=["DC-SIGN", "Glycosaminoglycans"],
    note="Hepatocyte tropism gives the jaundice and coagulopathy that make "
         "yellow fever viscerotropic rather than simply febrile.")
 
-_r("Alphavirus chikungunya", receptors=["MXRA8 (DC-STAMP)"],
+_r("Alphavirus chikungunya", receptors=["MXRA8 (DICAM, ASP3, limitrin)"],
    attachment=["Heparan sulfate", "Glycosaminoglycans"],
    tropism="Fibroblasts, synovial tissue, muscle, skin; not neurotropic in "
            "adults.",
@@ -200,11 +205,19 @@ _r("Alphavirus chikungunya", receptors=["MXRA8 (DC-STAMP)"],
         "direct explanation for the months-to-years polyarthralgia that makes "
         "chikungunya distinctive among arboviral fevers.")
 
-_r("Rubivirus rubellae", receptors=["MOG (myelin oligodendrocyte glycoprotein)"],
+_r("Rubivirus rubellae", receptors=["No established receptor"],
+   attachment=["MOG (myelin oligodendrocyte glycoprotein) — proposed, and "
+               "cannot account for the tropism"],
    tropism="Respiratory epithelium, then placenta and fetal tissues.",
    entry="Endosomal, low-pH E1-mediated fusion.",
-   note="Placental and fetal tropism in the first trimester produces congenital "
-        "rubella syndrome; maternal infection after 20 weeks rarely does.")
+   note="MOG was reported as a receptor in 2011 on the strength of E1 binding "
+        "and of conferring permissiveness on 293T cells, and it is still the "
+        "only candidate named — but MOG is expressed essentially only in "
+        "oligodendrocytes, keratinocytes without surface MOG are infected, and "
+        "it therefore cannot explain respiratory or placental entry. Listing it "
+        "as the receptor contradicted the tropism printed beside it. Placental "
+        "and fetal tropism in the first trimester produces congenital rubella "
+        "syndrome; maternal infection after 20 weeks rarely does.")
 
 # --- Picornaviridae ------------------------------------------------------
 _r("Enterovirus coxsackiepol", receptors=["CD155 / PVR (poliovirus receptor)"],
@@ -362,14 +375,20 @@ _r("Alphapapillomavirus 9",
         "engagement, are so effective.")
 
 _r("Betapolyomavirus secuhominis",
-   receptors=["Serotonin receptor 5-HT2A", "GT1b / lactoseries "
-              "tetrasaccharide c glycans"],
+   receptors=["LSTc glycan (α2,6-sialylated lactoseries tetrasaccharide c) — "
+              "attachment, required by all genotypes",
+              "Serotonin receptor 5-HT2A — entry, after attachment"],
    tropism="Renal tubular epithelium; oligodendrocytes and astrocytes in the "
            "brain.",
-   entry="Clathrin-mediated endocytosis.",
-   note="Oligodendrocyte tropism gives progressive multifocal "
-        "leukoencephalopathy; the dependence on immunosuppression explains why "
-        "PML follows natalizumab, rituximab and advanced HIV.")
+   entry="LSTc engagement, then 5-HT2A-dependent clathrin-mediated "
+         "endocytosis; soluble LSTc blocks infection.",
+   note="The two act in sequence rather than as alternatives, which is how "
+        "they were written here. JC virus binds b-series gangliosides weakly, "
+        "but they are not required for infection; GT1b and GD1b belong to BK "
+        "virus, which is a different species. Oligodendrocyte tropism gives "
+        "progressive multifocal leukoencephalopathy; the dependence on "
+        "immunosuppression explains why PML follows natalizumab, rituximab and "
+        "advanced HIV.")
 
 _r("Orthohepadnavirus hominoidei",
    receptors=["NTCP / SLC10A1 (sodium taurocholate cotransporting "

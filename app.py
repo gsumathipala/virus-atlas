@@ -38,6 +38,7 @@ if __name__ == "__main__":
 import json
 import re
 import unicodedata
+from collections import Counter
 from functools import lru_cache
 from pathlib import Path
 
@@ -417,6 +418,13 @@ def group_morphology(node):
     Architecture is a family-level trait, so a group node illustrates the same
     particle its species do. Ranks above family are too heterogeneous to draw
     one particle for, so they get nothing.
+
+    Segment count is the exception: it varies by genus inside six families, so
+    it is taken from the species beneath this node rather than from the family
+    default. Without that the Orbivirus page drew 11 segments -- Rotavirus'
+    number, since both are Sedoreoviridae -- when orbiviruses have 10, and the
+    Dichorhavirus page drew a single segment for a bipartite genome. Species
+    pages were already right, because they read their own accessions.
     """
     family = next(
         (p["name"] for p in ancestry(node["id"]) if p["rank"] == "family"), None
@@ -425,8 +433,33 @@ def group_morphology(node):
         return None
     sp = first_species(node["id"])
     genome = (sp.get("meta") or {}).get("genome") if sp else None
-    spec = morphology.spec_for(family, genome)
+    spec = morphology.spec_for(family, genome, segment_hint(node["id"]))
     return spec if spec.get("confident") else None
+
+
+def segment_hint(node_id, limit=40):
+    """The segment count the accessions under a node actually spell out.
+
+    The commonest count among the species sampled, not the largest: one
+    oddly-annotated isolate should not redraw a whole genus.
+    """
+    counts = []
+    stack, seen = [node_id], 0
+    while stack and seen < limit:
+        node = NODES[stack.pop()]
+        if node["rank"] == "species":
+            seen += 1
+            for cid in node["children"]:
+                acc = (NODES[cid].get("meta") or {}).get("accession") or ""
+                labels = {_segment_key(m) for m in SEGMENT_LABEL.findall(acc)}
+                if len(labels) > 1:
+                    counts.append(len(labels))
+                    break
+        elif node["rank"] != "isolate":
+            stack.extend(node["children"])
+    if not counts:
+        return None
+    return Counter(counts).most_common(1)[0][0]
 
 
 # A segment label in an ICTV accession field: "L: AB1234; M: AB1235; S: AB1236",

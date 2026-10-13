@@ -407,10 +407,22 @@ Beyond the profile, each species page carries whatever of these applies:
 ```
 python -m atlas.update --check        # what is stale; changes nothing
 python -m atlas.update --coverage     # which layers answer, and for what
+python -m atlas.audit                 # where the curated layers contradict
 python -m atlas.update --taxonomy     # fetch the current ICTV VMR and rebuild
 python -m atlas.update --live         # refresh WHO and Nextstrain caches
 python -m atlas.update --check-refs   # verify every citation
 ```
+
+`atlas.audit` looks for *disagreement* rather than for truth. Most of the
+curated claims can only be validated against the literature, one at a time, by
+someone who knows the field — but a large minority contradict something the
+atlas already holds, and those can be found exhaustively. A profile whose
+vectors say "None" while its transmission describes a mosquito; a species with
+two different pathogenicity verdicts in two files; a page drawing 11 genome
+segments where the accessions beneath it spell out 10; a reference that cites
+nothing a reader could follow. Each is either an error or a missing
+explanation. It is not a substitute for reading the claims — it is what makes
+reading them tractable, by taking the mechanical cases off the pile first.
 
 `--coverage` is the one that fails the build. It prints how much of the atlas
 each curated layer answers for, and exits non-zero if a species the atlas

@@ -288,7 +288,7 @@ REFERENCE = {
     "Orthobunyavirus tacaiumaense": (PO, "Tacaiuma virus. Febrile illness in Amazonia."),
     "Orthobunyavirus wyeomyiae": (PO, "Wyeomyia virus. Mild febrile illness in South America."),
     "Orthobunyavirus maguariense": (PO, "Maguari virus. Rare human febrile illness."),
-    "Orthobunyavirus bataiense": (PO, "Batai virus. Human seropositivity across Eurasia; rare febrile illness."),
+    "Orthobunyavirus bataiense": (PR, "Batai virus. Isolated from human blood in Sudan and a documented seroconversion with febrile illness in Sri Lanka, on a background of Eurasian seropositivity."),
     "Orthobunyavirus keystoneense": (PO, "Keystone virus. One confirmed human infection in Florida."),
     "Orthobunyavirus northwayense": (PO, "Northway virus. Human seropositivity in Alaska."),
     "Orthobunyavirus akabaneense": (AO, "Akabane virus. Major cause of bovine congenital arthrogryposis-hydranencephaly; no human disease."),

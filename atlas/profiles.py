@@ -257,7 +257,6 @@ COUNTRIES = {
                             "Germany": "reservoir"},
     "Lyssavirus caucasicus": {"Russia": "reservoir", "Georgia": "reservoir"},
     # Regional viruses that previously had no geography at all.
-    "Paslahepevirus balayani": None,          # handled by WORLDWIDE
     "Orthoflavivirus omskense": {"Russia": "human", "Kazakhstan": "human"},
     "Orthoflavivirus zilberi": {
         "Russia": "human", "China": "human", "Japan": "human",
@@ -631,7 +630,7 @@ profile(
 profile(
     "Orthobunyavirus schmallenbergense",
     names=["Schmallenberg virus (SBV)", "Sathuperi virus (SATV)", "Shamonda virus", "Douglas virus"],
-    tier="possible",
+    tier="animal-only",
     headline="Emerged in northwest Europe in 2011 as a ruminant teratogen; extensive human serosurveys of exposed farmers and veterinarians have found no convincing evidence of human infection.",
     syndrome="No human syndrome identified. In ruminants: transient fever, milk drop and diarrhoea in adults; congenital malformations when infection occurs in mid-gestation.",
     transmission="Culicoides biting midges.",
@@ -916,7 +915,7 @@ profile(
 profile(
     "Orthobunyavirus ileshaense",
     names=["Ilesha virus (ILEV)"],
-    tier="probable",
+    tier="established",
     headline="Bunyamwera-serogroup virus isolated from African febrile patients, with rare reports of haemorrhagic and neurological presentations.",
     syndrome="Fever with rash; isolated reports of meningoencephalitis and haemorrhagic manifestations.",
     transmission="Mosquito-borne (Anopheles).",
