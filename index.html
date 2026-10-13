@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Virus Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/css/app.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+      <g class="spikes">
+        <path d="M20 9V2M20 31v7M9 20H2M31 20h7M12.2 12.2 7.3 7.3M27.8 27.8l4.9 4.9M27.8 12.2l4.9-4.9M12.2 27.8l-4.9 4.9"/>
+      </g>
+      <g class="spike-heads">
+        <circle cx="20" cy="2.5" r="2"/><circle cx="20" cy="37.5" r="2"/>
+        <circle cx="2.5" cy="20" r="2"/><circle cx="37.5" cy="20" r="2"/>
+        <circle cx="7" cy="7" r="2"/><circle cx="33" cy="33" r="2"/>
+        <circle cx="33" cy="7" r="2"/><circle cx="7" cy="33" r="2"/>
+      </g>
+      <circle class="capsid" cx="20" cy="20" r="11"/>
+      <path class="core" d="M14 20c2-4 4 4 6 0s4-4 6 0"/>
+    </svg>
+    <div class="brand-text">
+      <h1>Virus Atlas</h1>
+      <p>Taxonomy · serogroups · human pathogenicity<span class="byline">
+        · by Saranga Sumathipala</span></p>
+    </div>
+  </div>
+
+  <div class="search" role="search">
+    <svg class="search-icon" viewBox="0 0 20 20" aria-hidden="true">
+      <circle cx="8.5" cy="8.5" r="5.5"/><path d="M12.8 12.8 17 17"/>
+    </svg>
+    <input id="q" type="search" autocomplete="off" spellcheck="false"
+           placeholder="Search a virus, serogroup, genus or family — try “OYAV”, “Simbu”, “Oropouche”"
+           aria-label="Search viruses">
+    <kbd>/</kbd>
+    <div id="results" class="results" hidden></div>
+  </div>
+
+  <div class="topbar-actions">
+    <button id="btn-tree" class="btn btn-icon btn-treetoggle" type="button"
+            aria-label="Show or hide the taxonomy tree">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h5M3 10h8M3 15h12"/></svg>
+    </button>
+    <button id="btn-radial" class="btn" type="button" aria-pressed="false">Radial tree</button>
+    <button id="btn-travel" class="btn" type="button" aria-pressed="false">Travel</button>
+    <button id="btn-signals" class="btn" type="button">Signals</button>
+    <button id="btn-dx" class="btn" type="button" aria-pressed="false">Differential</button>
+    <button id="btn-pathogens" class="btn" type="button">Pathogen index</button>
+    <button id="btn-theme" class="btn btn-icon" type="button" aria-label="Toggle colour theme">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="4.2"/><path d="M10 1v2.4M10 16.6V19M1 10h2.4M16.6 10H19M3.6 3.6l1.7 1.7M14.7 14.7l1.7 1.7M14.7 5.3l1.7-1.7M3.6 16.4l1.7-1.7"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="layout" data-view="tree">
+
+  <section class="panel tree-panel" id="tree-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Taxonomic tree</h2>
+        <p class="sub" id="tree-sub">Loading the ICTV hierarchy…</p>
+      </div>
+    </div>
+    <div class="tree-tools">
+      <button class="chip" type="button" data-jump="root/riboviria/orthornavirae/negarnaviricota/polyploviricotina/bunyaviricetes/elliovirales/peribunyaviridae/orthobunyavirus">Orthobunyavirus</button>
+      <button class="chip" type="button" data-collapse>Collapse all</button>
+    </div>
+    <div id="tree" class="tree" role="tree" aria-label="Virus taxonomy"></div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section class="panel radial-panel" id="radial-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Radial taxonomy tree</h2>
+        <p class="sub">Circular cladogram of ICTV ranks — click to re-root, drag to rotate</p>
+      </div>
+      <button class="btn btn-icon" type="button" id="btn-radial-close" aria-label="Close radial tree">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15"/></svg>
+      </button>
+    </div>
+    <div class="radial" id="radial"></div>
+  </section>
+
+  <section class="panel travel-panel" id="travel-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Travel exposure</h2>
+        <p class="sub">Viral infections reported from a destination, by exposure route —
+          pick any virus to open its page</p>
+      </div>
+      <button class="btn btn-icon" type="button" id="btn-travel-close" aria-label="Close travel panel">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15"/></svg>
+      </button>
+    </div>
+    <form class="travel-form" id="travel-form">
+      <label>Country
+        <input id="travel-country" type="text" list="travel-countries"
+               autocomplete="off" spellcheck="false" placeholder="e.g. Uganda">
+        <datalist id="travel-countries"></datalist>
+      </label>
+      <label>Days since return <span class="opt">(optional)</span>
+        <input id="travel-days" type="number" min="0" max="3650" placeholder="e.g. 11">
+      </label>
+      <button class="btn btn-primary" type="submit">Show exposures</button>
+    </form>
+    <div class="travel-out" id="travel-out">
+      <p class="travel-hint">
+        Enter a destination to list the viral infections reported from it,
+        grouped by how a traveller would be exposed. Adding days since return
+        marks which incubation windows are still open.
+      </p>
+    </div>
+  </section>
+
+  <section class="panel dx-panel" id="dx-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Differential by presentation</h2>
+        <p class="sub">Start from the syndrome, narrow by travel and exposure</p>
+      </div>
+      <button class="btn btn-icon" type="button" id="btn-dx-close" aria-label="Close differential">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15"/></svg>
+      </button>
+    </div>
+    <form class="dx-form" id="dx-form">
+      <label>Presentation
+        <select id="dx-syndrome"></select>
+      </label>
+      <label>Country <span class="opt">(optional)</span>
+        <input id="dx-country" type="text" list="dx-countries" autocomplete="off"
+               spellcheck="false" placeholder="e.g. Thailand">
+        <datalist id="dx-countries"></datalist>
+      </label>
+      <label>Days since return <span class="opt">(optional)</span>
+        <input id="dx-days" type="number" min="0" max="3650" placeholder="e.g. 10">
+      </label>
+      <label>Exposure <span class="opt">(optional)</span>
+        <select id="dx-route"><option value="">any</option></select>
+      </label>
+      <button class="btn btn-primary" type="submit">Show candidates</button>
+    </form>
+    <div class="dx-out" id="dx-out">
+      <p class="travel-hint">
+        Pick a presenting syndrome. Adding a destination intersects the list
+        with viruses reported from there; adding days since return drops the
+        ones whose incubation window has closed.
+      </p>
+    </div>
+  </section>
+
+  <article class="panel side" id="side" aria-live="polite">
+    <div class="side-empty">
+      <h3>Select anything in the tree</h3>
+      <p>
+        Pick a family, a genus, a serogroup or a species and this panel fills with
+        an illustrated briefing: the particle, the genome, how it is transmitted,
+        where it has been reported, and the evidence that it does or does not
+        infect humans.
+      </p>
+      <p class="hint">Start with <button class="link" type="button" data-seed>Orthobunyavirus catqueense — Oya&nbsp;virus</button></p>
+    </div>
+  </article>
+
+</main>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-head">
+      <h2 id="modal-title">Pathogen index</h2>
+      <button class="btn btn-icon" type="button" data-close aria-label="Close">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<footer class="footnote">
+  Taxonomy and isolate records from the
+  <a href="https://ictv.global/vmr" target="_blank" rel="noopener">ICTV Virus Metadata Resource</a>
+  (<code>VMR_MSL41.v1.20260729.xlsx</code>, released 2026-07-29, taken 2026-10-11, exported 2026-10-13).
+  Map geometry: Natural Earth (public domain).
+  Live citations: Europe PMC. Serogroups, virion architecture and pathogenicity
+  profiles are a curated layer, not part of ICTV. All figures are schematics drawn
+  from these data, not micrographs.
+  <strong>Educational reference only — not clinical guidance.</strong>
+  <span class="copyright">
+    © 2026 <b>Saranga Sumathipala</b>. All rights reserved.
+    The software and its curated datasets are proprietary; no licence is
+    granted to copy, host, adapt or text-mine them.
+    <a href="https://github.com/gsumathipala/virus-atlas/blob/main/LICENSE"
+       target="_blank" rel="noopener">Terms</a>
+  </span>
+</footer>
+
+<script src="static/js/static-api.js"></script>
+<script src="static/js/figures.js"></script>
+<script src="static/vendor/d3.v7.min.js"></script>
+<script src="static/js/radial.js"></script>
+<script src="static/js/app.js"></script>
+</body>
+</html>
