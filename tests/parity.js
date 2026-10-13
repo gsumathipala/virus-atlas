@@ -65,7 +65,9 @@ const EXEMPT = [
   // machine that exported it had cached; the server's keep moving.
   /^\.live\.(cache|surveillance)\./,
   /\.age_s$/, /\.fetched_at$/, /\.(signal_)?sources\[\d+\]\.state$/,
-  /^\.static$/, /^\.ecdc$/,
+  // Which build this is, and when it was exported. The static copy is a
+  // snapshot and says so in its footer; the server is not one.
+  /^\.static$/, /^\.generated$/, /^\.source\.snapshot$/, /^\.ecdc$/,
 ];
 
 function diff(a, b, path = '') {

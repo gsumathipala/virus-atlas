@@ -10,6 +10,9 @@ __pycache__/
 # the spreadsheet plus the curated layers.
 data/atlas.json
 data/raw/*.xlsx
+# ...but data/raw/vmr.source.json IS tracked: it is 200 bytes recording which
+# ICTV release the curated layers were written against, which a clone needs
+# and the 3.9 MB spreadsheet it describes does not belong in git.
 
 # On-demand caches. All three refill themselves from public endpoints.
 data/evidence.sqlite

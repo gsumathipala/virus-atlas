@@ -397,6 +397,43 @@ species between releases. `atlas.build` additionally reports serogroup
 epithets that match no species, after an audit found 28 of them failing
 silently.
 
+### What goes stale, and what does not
+
+The hosted copy needs attention a few times a year, not continuously, and the
+parts that change fastest are the parts that need nothing.
+
+| Layer | Moves | Hosted copy |
+| --- | --- | --- |
+| WHO outbreak news, UKHSA | hours | fetched by the browser; always current |
+| Nextstrain builds | ~12 hours | fetched by the browser; always current |
+| Europe PMC literature | on demand | fetched by the browser; always current |
+| ICTV taxonomy | 2–4 releases a year | frozen at export; needs a rebuild |
+| Curated layers | when they are edited | frozen at export; needs a rebuild |
+
+Nothing expires silently. The footer names the release it was built from and
+the date it was exported — `VMR_MSL41.v1.20260729.xlsx, released 2026-07-29,
+taken 2026-10-11, exported 2026-10-13` — so the age of a snapshot is on the
+page rather than something a reader has to assume. `fetch_vmr.py` records the
+release beside the spreadsheet it downloads, because saving it under a fixed
+`vmr.xlsx` had been throwing away the one part of the upstream filename that
+identifies it.
+
+To refresh the hosted copy:
+
+```bash
+python -m atlas.update --check        # has ICTV published anything new?
+python -m atlas.update --taxonomy     # fetch + rebuild, and diff the species
+python -m atlas.update --coverage     # the curated layers still answer
+python export_static.py               # rebuild site/
+cd site && git init -q && git add -A \
+  && git commit -qm "Static build of Virus Atlas" \
+  && git push --force <remote> HEAD:gh-pages
+```
+
+A new Master Species List is the one that needs a look rather than a cron job:
+it renames species wholesale, and every curated layer here is keyed by
+binomial. That is what `--check` and the rebuild diff are for.
+
 ## Sources and caveats
 
 Taxonomy and isolate records come from the

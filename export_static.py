@@ -38,6 +38,7 @@ record already carries their metadata, and the browser rebuilds the isolate
 nodes from it.
 """
 
+import datetime
 import json
 import re
 import shutil
@@ -114,8 +115,14 @@ def main():
     # Jinja is a server-side thing; resolve the two tags it uses by hand.
     tpl = re.sub(r"\{\{\s*url_for\('static',\s*filename='([^']+)'\)\s*\}\}",
                  r"static/\1", tpl)
-    tpl = tpl.replace("{{ source.url }}", A.PAYLOAD["source"]["url"])
-    tpl = tpl.replace("{{ source.file }}", A.PAYLOAD["source"]["file"])
+    # Resolve every {{ source.x }} the footer uses, and stamp the export
+    # date: this copy is a snapshot, and a reader cannot judge a snapshot
+    # whose age the page does not state.
+    src = {**A.PAYLOAD["source"],
+           "snapshot": f", exported {datetime.date.today().isoformat()}"}
+    tpl = re.sub(r"\{\{\s*source\.(\w+)\s*\}\}",
+                 lambda m: str(src.get(m.group(1), "")), tpl)
+    assert "{{" not in tpl, "an unresolved template tag survived"
     # The interceptor must be installed before app.js runs.
     tpl = tpl.replace('<script src="static/js/figures.js"></script>',
                       '<script src="static/js/static-api.js"></script>\n'
@@ -132,6 +139,8 @@ def main():
     with A.app.test_request_context("/api/meta"):
         meta = A.api_meta().get_json()
     meta["static"] = True
+    meta["generated"] = datetime.date.today().isoformat()
+    meta["source"] = src
     total += write(api / "meta.json", meta, "meta.json")
 
     # -------------------------------------------------------------- skeleton

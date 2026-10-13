@@ -10,6 +10,9 @@ each ICTV ratification.
 Usage:  python fetch_vmr.py
 """
 
+import datetime
+import hashlib
+import json
 import re
 import sys
 import urllib.request
@@ -18,6 +21,12 @@ from pathlib import Path
 PAGE = "https://ictv.global/vmr"
 BASE = "https://ictv.global"
 DEST = Path(__file__).resolve().parent / "data" / "raw" / "vmr.xlsx"
+# The download is saved under a fixed name so the rest of the build does not
+# have to guess at it, which threw away the one part of the upstream filename
+# that matters -- the release. This records it beside the file, so a page can
+# say which Master Species List it is showing and when it was taken, instead
+# of the uninformative "vmr.xlsx".
+STAMP = DEST.with_suffix(".source.json")
 UA = {"User-Agent": "virus-atlas/1.0 (educational taxonomy browser)"}
 
 
@@ -43,14 +52,34 @@ def latest_url():
     return BASE + max(links, key=sort_key)
 
 
+def stamp(url, blob):
+    """Record which release this is, beside the file it describes."""
+    release = url.rsplit("/", 1)[-1]
+    msl = re.search(r"MSL(\d+)(?:\.v(\d+))?", release)
+    date = re.search(r"(20\d{2})(\d{2})(\d{2})", release)
+    STAMP.write_text(json.dumps({
+        "release": release,
+        "url": url,
+        "msl": f"MSL{msl.group(1)}" + (f".v{msl.group(2)}" if msl and msl.group(2) else "")
+               if msl else None,
+        "released": "-".join(date.groups()) if date else None,
+        "fetched": datetime.date.today().isoformat(),
+        "bytes": len(blob),
+        "sha256": hashlib.sha256(blob).hexdigest(),
+    }, indent=1) + "\n", encoding="utf-8")
+    return release
+
+
 def main():
     url = latest_url()
     print(f"downloading {url}")
     DEST.parent.mkdir(parents=True, exist_ok=True)
     req = urllib.request.Request(url, headers=UA)
-    with urllib.request.urlopen(req, timeout=300) as r, DEST.open("wb") as fh:
-        fh.write(r.read())
-    print(f"wrote {DEST} ({DEST.stat().st_size / 1e6:.1f} MB)")
+    with urllib.request.urlopen(req, timeout=300) as r:
+        blob = r.read()
+    DEST.write_bytes(blob)
+    release = stamp(url, blob)
+    print(f"wrote {DEST} ({len(blob) / 1e6:.1f} MB) -- {release}")
     print("next:  python -m atlas.build")
 
 

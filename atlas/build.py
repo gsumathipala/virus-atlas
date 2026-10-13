@@ -331,6 +331,31 @@ def summarise(nodes):
     return nodes
 
 
+def vmr_release(src):
+    """What fetch_vmr.py recorded about the spreadsheet, if anything.
+
+    `release` and `dated` are what the footer prints, pre-composed, so a build
+    from a spreadsheet with no stamp beside it degrades to the bare filename
+    instead of printing "released ; taken ".
+    """
+    out = {"release": src.name, "dated": "", "snapshot": ""}
+    stamp = src.with_suffix(".source.json")
+    try:
+        rec = json.loads(stamp.read_text())
+    except (OSError, ValueError):
+        return out
+    out.update({k: rec[k] for k in ("release", "msl", "released", "fetched")
+                if rec.get(k)})
+    parts = []
+    if rec.get("released"):
+        parts.append(f"released {rec['released']}")
+    if rec.get("fetched"):
+        parts.append(f"taken {rec['fetched']}")
+    if parts:
+        out["dated"] = ", " + ", ".join(parts)
+    return out
+
+
 def main():
     src = Path(sys.argv[1]) if len(sys.argv) > 1 else DATA / "raw" / "vmr.xlsx"
     if not src.exists():
@@ -364,6 +389,10 @@ def main():
             "name": "ICTV Virus Metadata Resource",
             "file": src.name,
             "url": "https://ictv.global/vmr",
+            # The release this was built from, written by fetch_vmr.py. A
+            # hosted snapshot that cannot say which Master Species List it
+            # shows, or how old it is, gives a reader no way to judge it.
+            **vmr_release(src),
         },
         "tiers": profiles.TIERS,
         "nodes": nodes,
