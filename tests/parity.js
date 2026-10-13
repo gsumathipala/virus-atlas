@@ -60,6 +60,10 @@ const URLS = [
 // the two calls will show up here as a difference; re-run before believing
 // it.
 const EXEMPT = [
+  // Cache state: how many lookups each build happens to have cached, and how
+  // old they are. The static build's figures are a snapshot of whatever the
+  // machine that exported it had cached; the server's keep moving.
+  /^\.live\.(cache|surveillance)\./,
   /\.age_s$/, /\.fetched_at$/, /\.(signal_)?sources\[\d+\]\.state$/,
   /^\.static$/, /^\.ecdc$/,
 ];
