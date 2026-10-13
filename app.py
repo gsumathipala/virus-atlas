@@ -370,7 +370,9 @@ def api_node():
         out["receptors"] = receptors.get(node["name"])
         out["biosafety"] = biosafety.get(
             node["name"], (node.get("meta") or {}).get("family"),
-            (node.get("meta") or {}).get("host"))
+            (node.get("meta") or {}).get("host"),
+            (node.get("meta") or {}).get("genus"),
+            (node.get("meta") or {}).get("tier"))
         out["countermeasures"] = countermeasures.get(node["name"])
         out["crossreact"] = crossreact.for_species(node["name"])
         out["therapeutics"] = therapeutics.get(node["name"])
@@ -468,19 +470,36 @@ def species_morphology(node):
 
 
 def species_geo(node):
-    """Resolve the profile's prose distribution into map countries."""
+    """Where this species is reported, as the map needs it.
+
+    The same resolution the travel index uses, so the two cannot disagree.
+    It used to read the profile's prose only, which meant a map for the 56
+    profiled species and nothing for the other 159 the travel panel places
+    on a destination list.
+    """
     meta = node.get("meta") or {}
-    prof = meta.get("profile") or {}
-    text = prof.get("geography")
-    if not text:
+    where = travel.geography_for(node["name"], meta, geo)
+    eradicated = geo.eradicated(where["text"])
+    # An eradicated virus has no countries and is not worldwide, and that is
+    # the finding, not an absence of one. Dropping it took the "Eradicated"
+    # block off the smallpox page.
+    if not where["countries"] and not where["worldwide"] and not eradicated:
         return None
-    countries, worldwide, matched = geo.resolve(text)
+    # A cosmopolitan species has no geography prose to quote -- what it has is
+    # a clinical note, which read as a description of the distribution when it
+    # was put under the map. Say what the map means instead.
+    text = where["text"]
+    if where["source"] == "worldwide":
+        text = ("Reported worldwide: this species circulates on every "
+                "inhabited continent, which is why no country list is held "
+                "for it.")
     return {
         "text": text,
-        "countries": countries,
-        "worldwide": worldwide,
-        "matched": matched[:8],
-        "eradicated": geo.eradicated(text),
+        "countries": where["countries"],
+        "worldwide": where["worldwide"],
+        "matched": where["matched"][:8],
+        "source": where["source"],
+        "eradicated": eradicated,
     }
 
 

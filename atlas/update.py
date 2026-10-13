@@ -4,6 +4,7 @@ Proprietary. No licence granted; see LICENSE.
 Keep the atlas current: check, fetch, rebuild, and report what changed.
 
     python -m atlas.update --check          what is stale, change nothing
+    python -m atlas.update --coverage       which layers answer, and for what
     python -m atlas.update --taxonomy       fetch the current ICTV VMR + rebuild
     python -m atlas.update --live           force-refresh the live caches
     python -m atlas.update --all            both, with a change report
@@ -30,6 +31,7 @@ are checked too.
 """
 
 import argparse
+import collections
 import hashlib
 import json
 import re
@@ -280,6 +282,89 @@ def check():
     return 0 if same is not False else 1
 
 
+# An established human pathogen with no distribution, and why there is none.
+# Anything else reaching that state is a gap, and --coverage fails on it.
+NO_GEOGRAPHY = {
+    "Orthopoxvirus vaccinia": "a vaccine strain, with no natural distribution",
+}
+
+
+def coverage():
+    """How much of the atlas each curated layer actually answers for.
+
+    Written after two layers turned out to be far thinner than they looked.
+    Containment was resolved for 12,249 species and absent from the other
+    5,305, 189 of which this atlas itself calls human pathogens; and the
+    distribution map was read from profile prose only, so 56 species had one
+    while the travel index knew the geography of 215. Neither showed up as an
+    error -- the block simply was not rendered -- which is exactly why a
+    coverage number has to be something the project asserts rather than
+    something a reader notices.
+    """
+    import app as A
+    from atlas import biosafety
+
+    TIERED = ("established", "probable", "possible")
+    rows = []
+    for node in A.NODES.values():
+        if node["rank"] != "species":
+            continue
+        meta = node.get("meta") or {}
+        rows.append((
+            node["name"], meta.get("tier"),
+            biosafety.get(node["name"], meta.get("family"), meta.get("host"),
+                          meta.get("genus"), meta.get("tier")),
+            A.species_geo(node),
+        ))
+
+    print(f"Coverage over {len(rows):,} species\n")
+    print("containment (atlas.biosafety)")
+    basis = collections.Counter(b["basis"] for _, _, b, _ in rows)
+    for k, v in basis.most_common():
+        print(f"  {k:<14}{v:>7,}")
+    levelled = sum(1 for _, _, b, _ in rows if b.get("bsl"))
+    print(f"  {'with a level':<14}{levelled:>7,}")
+
+    print("\ndistribution (app.species_geo)")
+    src = collections.Counter(g["source"] for _, _, _, g in rows if g)
+    for k, v in src.most_common():
+        print(f"  {k:<14}{v:>7,}")
+    print(f"  {'none':<14}{sum(1 for *_, g in rows if not g):>7,}")
+
+    print("\nby human-pathogenicity tier")
+    print(f"  {'tier':<13}{'species':>8}{'containment':>13}{'distribution':>14}")
+    for tier in TIERED + ("animal-only", "no-evidence", "unassessed"):
+        sel = [r for r in rows if r[1] == tier]
+        if not sel:
+            continue
+        bsl = sum(1 for _, _, b, _ in sel if b.get("bsl"))
+        gg = sum(1 for *_, g in sel if g)
+        print(f"  {tier:<13}{len(sel):>8,}{bsl:>13,}{gg:>14,}")
+
+    fail = 0
+    gaps = [n for n, t, b, _ in rows if t in TIERED and not b.get("bsl")]
+    if gaps:
+        fail = 1
+        print(f"\nFAIL  {len(gaps)} species with a pathogenicity tier have no "
+              "containment level")
+        for n in gaps[:10]:
+            print(f"        {n}")
+    missing = [n for n, t, _, g in rows
+               if t == "established" and not g and n not in NO_GEOGRAPHY]
+    if missing:
+        fail = 1
+        print(f"\nFAIL  {len(missing)} established human pathogens have no "
+              "distribution")
+        for n in missing[:10]:
+            print(f"        {n}")
+    for name, why in NO_GEOGRAPHY.items():
+        print(f"\nnote  {name} has no distribution: {why}")
+    if not fail:
+        print("\nOK    every species the atlas calls a human pathogen has a "
+              "containment level, and every established one a distribution")
+    return fail
+
+
 def taxonomy(url=None, force=False):
     url = url or VMR_CURRENT
     print(f"fetching {url}")
@@ -374,6 +459,8 @@ def main():
         description="Check or refresh the data behind the atlas.")
     ap.add_argument("--check", action="store_true",
                     help="report what is stale; change nothing")
+    ap.add_argument("--coverage", action="store_true",
+                    help="how much of the atlas each curated layer answers")
     ap.add_argument("--taxonomy", action="store_true",
                     help="fetch the current ICTV VMR and rebuild")
     ap.add_argument("--live", action="store_true",
@@ -396,6 +483,9 @@ def main():
         for r in rels:
             print(f"  MSL{r['msl']}  {r['date']}  {r['file']}")
         return 0
+
+    if args.coverage:
+        return coverage()
 
     if args.check_refs:
         bad, weak = check_refs()

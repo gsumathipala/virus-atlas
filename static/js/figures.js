@@ -775,19 +775,24 @@ const F = (() => {
 
   function mapFigure(w, countries, { worldwide = false } = {}) {
     const set = new Set(countries);
+    // A cosmopolitan virus carries no country list, and shading nothing
+    // under the words "reported worldwide" was the least informative map
+    // the app could draw. Shade all of it instead.
+    const all = worldwide && !set.size;
     const paths = [];
     const marks = [];
     for (const [name, geom] of Object.entries(w.countries)) {
       if (name === 'Antarctica') continue;
-      const on = set.has(name);
+      const on = all || set.has(name);
       paths.push(`<path class="geo${on ? ' on' : ''}" d="${geom.d}">
         ${on ? `<title>${esc(name)}</title>` : ''}</path>`);
-      if (on && geom.c && set.size <= 12) {
+      if (on && geom.c && !all && set.size <= 12) {
         marks.push(`<circle class="geo-dot" cx="${geom.c[0]}" cy="${geom.c[1]}" r="3.4"/>`);
       }
     }
     return `<svg class="fig fig-map" viewBox="0 30 1000 440" role="img"
-       aria-label="World distribution map highlighting ${countries.length} countries">
+       aria-label="${all ? 'World distribution map, reported worldwide'
+         : `World distribution map highlighting ${countries.length} countries`}">
       <g class="geo-g">${paths.join('')}</g>${marks.join('')}
       ${worldwide ? '<text class="map-note" x="500" y="60" text-anchor="middle">reported worldwide</text>' : ''}
     </svg>`;

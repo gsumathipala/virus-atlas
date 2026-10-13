@@ -392,7 +392,7 @@ function speciesPlates(d) {
       'wide');
   }
 
-  if (d.geo && (d.geo.countries.length || d.geo.eradicated)) {
+  if (d.geo && (d.geo.countries.length || d.geo.worldwide || d.geo.eradicated)) {
     const g = d.geo;
     const svg = g.eradicated
       ? `<div class="map-eradicated"><strong>Eradicated.</strong>
@@ -400,10 +400,14 @@ function speciesPlates(d) {
       : `<div class="map-slot" data-map='${esc(JSON.stringify(g.countries))}'
               data-worldwide="${g.worldwide ? '1' : '0'}">
            <div class="map-loading">loading map…</div></div>`;
-    out += figure(svg, 'Reported distribution.',
-      `${g.text}${g.eradicated ? '' :
-        ` Countries shaded where the literature reports the virus; resolved from that description, so it is a schematic of reported range rather than a surveillance map.`}`,
-      'wide');
+    // How the range was arrived at, which the reader needs in order to
+    // weigh it: a curated country list, global circulation, or countries
+    // pulled out of a prose description.
+    const how = g.eradicated ? ''
+      : g.worldwide ? ` Reported from every inhabited region, so the whole map is shaded; that is circulation on all continents, not a case in every country.`
+      : g.source === 'curated' ? ` Countries shaded from a curated list for this virus, which is why no region phrase has been expanded into it.`
+      : ` Countries shaded where the literature reports the virus, resolved from the description above — a schematic of reported range rather than a surveillance map.`;
+    out += figure(svg, 'Reported distribution.', `${g.text}${how}`, 'wide');
   }
 
   return out ? `<div class="plates">${out}</div>` : '';
@@ -450,9 +454,27 @@ function biosafetyBlock(b) {
   if (!b) return '';
   const BASIS = {
     species: 'Assigned for this species.',
+    genus: `Genus-level default for ${b.genus || 'this genus'} — no species-specific entry.`,
     family: `Family-level default for ${b.family || 'this family'} — no species-specific entry.`,
     'host-range': 'Inferred from ICTV host range.',
+    'no-host': 'ICTV records no host for this species.',
+    unassigned: 'Nothing is assigned for this species or its family.',
   };
+  const CAVEAT = `Containment is jurisdictional and depends on the procedure,
+    not only the agent. Orientation only — not a substitute for a local risk
+    assessment.`;
+  // No level to give. Say that, and why: a page that simply omitted the
+  // block could not be told apart from one where the question never arose.
+  if (!b.bsl) {
+    return section('Biosafety & containment', `
+      <div class="bsl" data-bsl="">
+        <span class="bsl-badge">Not assigned</span>
+        <div class="bsl-body">
+          <p>${esc(b.bsl_note || '')}</p>
+          <p class="muted bsl-caveat">${esc(BASIS[b.basis] || '')} ${esc(CAVEAT)}</p>
+        </div>
+      </div>`);
+  }
   return section('Biosafety & containment', `
     <div class="bsl" data-bsl="${b.bsl}">
       <span class="bsl-badge">${esc(b.bsl_label || '')}</span>
@@ -462,10 +484,7 @@ function biosafetyBlock(b) {
         ${b.risk_group_label ? `<p class="muted">${esc(b.risk_group_label)}</p>` : ''}
         ${b.select_agent ? `<p class="bsl-sa">${esc(b.select_agent)}</p>` : ''}
         ${b.vaccine_offer ? `<p class="bsl-vax">${esc(b.vaccine_offer)}</p>` : ''}
-        <p class="muted bsl-caveat">${esc(BASIS[b.basis] || '')}
-          Containment is jurisdictional and depends on the procedure, not only
-          the agent. Orientation only — not a substitute for a local risk
-          assessment.</p>
+        <p class="muted bsl-caveat">${esc(BASIS[b.basis] || '')} ${esc(CAVEAT)}</p>
       </div>
     </div>`);
 }

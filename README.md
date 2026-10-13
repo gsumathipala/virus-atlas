@@ -113,10 +113,16 @@ no stock art, so they stay sharp at any size and recolour with the theme.
   bat-spillover with an intermediate host, respiratory, or direct contact,
   including a nosocomial loop where person-to-person spread is documented.
 - **Distribution map** — a world choropleth shading the countries where the
-  virus is reported, resolved from the prose distribution by `atlas/geo.py`.
-  Geometry is Natural Earth 110m (public domain), decoded from TopoJSON into
-  plain SVG paths at build time by `build_world.py`, so the browser needs no
-  mapping library.
+  virus is reported, for the 220 species whose range the atlas can place. It
+  comes from a curated country list where there is one, otherwise from
+  membership of the cosmopolitan set, and otherwise from the places named in
+  the prose, resolved by `atlas/geo.py`. That order matters: expanding
+  "Central and South Asia" put Crimean-Congo haemorrhagic fever in Sri Lanka,
+  which has never reported a case. It is the same resolution the travel panel
+  uses — the map used to read the profile prose alone, so 56 species had one
+  while the travel index knew the geography of 215. Geometry is Natural Earth
+  110m (public domain), decoded from TopoJSON into plain SVG paths at build
+  time by `build_world.py`, so the browser needs no mapping library.
 
 Figures appear on species, isolate, genus and family pages; architecture is a
 family-level trait, so a family page illustrates the same particle its species
@@ -336,8 +342,15 @@ Beyond the profile, each species page carries whatever of these applies:
   remdesivir likewise. 69 verified references.
 - **Receptor & cell tropism** (39) — entry receptors kept separate from
   attachment factors, plus why the receptor explains the disease.
-- **Biosafety & containment** (71) — BSL, WHO risk group, US select-agent
-  status, worker vaccination, and the reasoning behind the level.
+- **Biosafety & containment** — BSL, WHO risk group, US select-agent status,
+  worker vaccination, and the reasoning behind the level. 75 species are
+  assigned individually; a genus or family default covers the rest, and host
+  range answers for the 12,598 species with no vertebrate host at all. Every
+  species the atlas calls an established, probable or possible human pathogen
+  has a level, which `python -m atlas.update --coverage` asserts. Where there
+  is genuinely nothing to give — 2,024 species known only from a metagenome,
+  with no host on record — the page says so rather than leaving the block out,
+  because an absent block and an absent hazard look identical.
 - **Vaccines & antivirals** (48) — including the explicit absence of them.
 - **Serological cross-reactivity** (10 complexes) — what cross-reacts, what it
   does to interpretation, what resolves it. Also on genus and serogroup pages.
@@ -364,10 +377,18 @@ Beyond the profile, each species page carries whatever of these applies:
 
 ```
 python -m atlas.update --check        # what is stale; changes nothing
+python -m atlas.update --coverage     # which layers answer, and for what
 python -m atlas.update --taxonomy     # fetch the current ICTV VMR and rebuild
 python -m atlas.update --live         # refresh WHO and Nextstrain caches
 python -m atlas.update --check-refs   # verify every citation
 ```
+
+`--coverage` is the one that fails the build. It prints how much of the atlas
+each curated layer answers for, and exits non-zero if a species the atlas
+calls a human pathogen has no containment level, or an established one has no
+distribution. It exists because both of those were true and silent: the layer
+simply rendered nothing, which reads on the page as "no hazard" rather than
+"not recorded".
 
 The taxonomy rebuild diffs species and then reports every curated key and
 every tier correction that no longer matches — the failure mode that actually

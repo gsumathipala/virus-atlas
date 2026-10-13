@@ -144,6 +144,7 @@ WORLDWIDE = {
     "Rhadinovirus humangamma8",
     # blood-borne and sexually transmitted
     "Orthohepadnavirus hominoidei", "Deltavirus italiense",
+    "Orthohepacivirus hominis",
     "Lentivirus humimdef2", "Deltaretrovirus priTlym1",
     "Alphapapillomavirus 7", "Alphapapillomavirus 9",
     "Alphapapillomavirus 10", "Mupapillomavirus 1",

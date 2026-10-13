@@ -344,14 +344,17 @@ def detail_for(node_id, tables):
                                      or "unassigned", spec)
         if rec["baltimore"].get("note"):
             rec["baltimore_note"] = rec["baltimore"]["note"]
-    # Biosafety answers at three levels and says which in `basis`. Keying all
-    # of them by species stored one family default 9,646 times, 4.5 MB of it.
+    # Biosafety answers at several levels and says which in `basis`. Keying
+    # all of them by species stored one family default 9,646 times, 4.5 MB of
+    # it, so the slot is named after whatever the answer actually came from.
     bs = rec.get("biosafety")
     if bs:
         basis = bs.get("basis")
         prefer = (name if basis == "species"
                   else f"family:{bs.get('family') or meta.get('family')}"
-                  if basis == "family" else "host-range")
+                  if basis == "family"
+                  else f"genus:{bs.get('genus')}" if basis == "genus"
+                  else basis or "host-range")
         rec["biosafety_ref"] = hoist(tables, "biosafety", prefer, bs)
 
     for field in ("receptors", "countermeasures", "therapeutics",

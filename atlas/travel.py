@@ -195,6 +195,48 @@ def _genus_routes(nodes):
     return out
 
 
+def geography_for(name, meta, geo, known_countries=None):
+    """Where a species is reported, from the best source available.
+
+    Three sources, in this order, because an explicit country list beats
+    expanding prose: a curated list for the species; membership of the
+    cosmopolitan set; and failing both, the places named in whatever prose
+    there is -- the profile's geography for a profiled species, and otherwise
+    its tier note, which is where the other 228 say where they occur.
+
+    "Central and South Asia" expanded Crimean-Congo haemorrhagic fever into
+    Sri Lanka, which has no Hyalomma-borne CCHF and no reported case, which is
+    why the curated list wins wherever there is one.
+
+    This is the one place the question is answered. The species page used to
+    answer it separately, from the profile prose alone, so 160 species that
+    the travel panel places on a destination list had no map of their own --
+    hepatitis E, mumps, every herpesvirus, Mayaro, Barmah Forest.
+    """
+    if known_countries is None:
+        known_countries = geo.travel_names()
+    prof = meta.get("profile") or {}
+    text = prof.get("geography") or meta.get("tier_note") or ""
+
+    graded = profiles.country_grades(name)
+    if graded:
+        countries = [c for c in graded if c in known_countries]
+        return {"text": text, "source": "curated", "countries": countries,
+                "worldwide": False, "matched": [],
+                "origin": {c: "curated" for c in countries},
+                "grades": {c: graded[c] for c in countries}}
+    if name in profiles.WORLDWIDE:
+        # Cosmopolitan species whose curated note carries no geography.
+        # Without this they dropped out of the index entirely, which is how
+        # hepatitis E and every herpesvirus came to be missing.
+        return {"text": text, "source": "worldwide", "countries": [],
+                "worldwide": True, "matched": [], "origin": {}, "grades": {}}
+    countries, worldwide, matched, origin = geo.resolve_detailed(text)
+    return {"text": text, "source": "prose", "countries": countries,
+            "worldwide": worldwide, "matched": matched, "origin": origin,
+            "grades": {}}
+
+
 def build_index(nodes, geo):
     """country -> [entry], plus a list of cosmopolitan entries.
 
@@ -217,29 +259,15 @@ def build_index(nodes, geo):
         stats["species"] += 1
 
         prof = meta.get("profile") or {}
-        geo_text = prof.get("geography") or meta.get("tier_note") or ""
-
-        # An explicit country list, where one exists, beats expanding prose.
-        # "Central and South Asia" expanded CCHF into Sri Lanka, which has no
-        # Hyalomma-borne CCHF and no reported case.
-        graded = profiles.country_grades(node["name"])
-        grades = {}
-        if graded:
-            countries = [c for c in graded if c in known_countries]
-            is_worldwide = False
-            origin = {c: "curated" for c in countries}
-            grades = {c: graded[c] for c in countries}
-        elif node["name"] in profiles.WORLDWIDE:
-            # Cosmopolitan species whose curated note carries no geography.
-            # Without this they dropped out of the index entirely, which is
-            # how hepatitis E and every herpesvirus came to be missing.
-            countries, is_worldwide, origin = [], True, {}
-        else:
-            countries, is_worldwide, _matched, origin = geo.resolve_detailed(geo_text)
+        where = geography_for(node["name"], meta, geo, known_countries)
+        geo_text = where["text"]
+        countries = where["countries"]
+        is_worldwide = where["worldwide"]
+        origin, grades = where["origin"], where["grades"]
         if not countries and not is_worldwide:
             continue
         stats["with_geography"] += 1
-        if graded:
+        if where["source"] == "curated":
             stats["curated_geography"] += 1
 
         # Classified from transmission and vectors only. Including the

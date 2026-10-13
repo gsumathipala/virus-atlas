@@ -1772,6 +1772,7 @@ button { font: inherit; color: inherit; }
 .bsl[data-bsl="2"] .bsl-badge { color: var(--t-possible); border-color: color-mix(in srgb, var(--t-possible) 45%, transparent); background: color-mix(in srgb, var(--t-possible) 12%, transparent); }
 .bsl[data-bsl="3"] .bsl-badge { color: var(--t-probable); border-color: color-mix(in srgb, var(--t-probable) 50%, transparent); background: color-mix(in srgb, var(--t-probable) 14%, transparent); }
 .bsl[data-bsl="4"] .bsl-badge { color: var(--t-established); border-color: color-mix(in srgb, var(--t-established) 55%, transparent); background: color-mix(in srgb, var(--t-established) 16%, transparent); }
+.bsl[data-bsl=""] .bsl-badge { color: var(--muted); border-style: dashed; }
 .bsl-body p { margin: 0 0 7px; font-size: 12.5px; line-height: 1.65; }
 .bsl-sa, .bsl-vax {
   font-family: var(--mono); font-size: 10.5px; letter-spacing: .03em;

@@ -164,6 +164,22 @@ _b("Lyssavirus caucasicus", bsl=3, risk_group=3,
    select_agent=None,
    bsl_note="West Caucasian bat virus escapes rabies vaccine neutralisation, "
             "which makes any exposure consequential despite no human case.")
+# The rest of phylogroup II, and Ikoma. These are listed individually rather
+# than left to the Lyssavirus default, because that default says rabies
+# vaccination is required -- true, and for these three not protective, which
+# is the opposite of reassurance.
+for sp, label in [("Lyssavirus lagos", "Lagos bat virus"),
+                  ("Lyssavirus shimoni", "Shimoni bat virus")]:
+    _b(sp, bsl=3, risk_group=3, select_agent=None,
+       vaccine_offer="Rabies vaccination offered but NOT reliably protective",
+       bsl_note=f"{label} is in phylogroup II, which rabies vaccine-induced "
+                "antibody neutralises poorly. No human case is on record, and "
+                "containment rather than immunisation is what protects.")
+_b("Lyssavirus ikoma", bsl=3, risk_group=3, select_agent=None,
+   vaccine_offer="Rabies vaccination offered but of uncertain benefit",
+   bsl_note="Ikoma lyssavirus is divergent enough that rabies vaccine "
+            "cross-neutralisation cannot be assumed. Known from one African "
+            "civet; no human case.")
 _b("Orthohantavirus sinnombreense", bsl=3, risk_group=3, select_agent=None,
    bsl_note="Hantavirus cardiopulmonary syndrome agents are BSL-3; rodent "
             "work with infected animals is ABSL-4 in some jurisdictions "
@@ -300,7 +316,28 @@ _b("Enterovirus coxsackiepol", bsl=2, risk_group=2, select_agent=None,
             "worldwide, and holding it requires designation as a "
             "poliovirus-essential facility.")
 
-# Family- and genus-level fallbacks, used only when the species is unlisted.
+# Genus-level fallbacks, checked before the family. These exist where a genus
+# is uniform and differs from its family: the non-rabies lyssaviruses are all
+# BSL-3 while rabies virus itself is BSL-2, so the level cannot be stated once
+# for Rhabdoviridae.
+GENUS_DEFAULTS = {
+    "Lyssavirus": dict(bsl=3, risk_group=3,
+                       vaccine_offer="Rabies pre-exposure vaccination "
+                                     "required, with a documented titre -- "
+                                     "it cross-neutralises phylogroup I",
+                       bsl_note="The non-rabies lyssaviruses -- the bat "
+                                "lyssaviruses among them -- are handled at "
+                                "BSL-3, as Australian bat, West Caucasian "
+                                "bat and Mokola viruses are. Rabies virus "
+                                "itself is BSL-2 with pre-exposure "
+                                "vaccination. Vaccination does not reliably "
+                                "cover the phylogroup II lyssaviruses."),
+}
+
+# Family-level fallbacks, used only when neither the species nor its genus is
+# listed. Every family holding a virus this atlas calls an established,
+# probable or possible human pathogen has one, so a containment answer is
+# never simply absent from a page that needs it.
 GROUP_DEFAULTS = {
     "Filoviridae": dict(bsl=4, risk_group=4,
                         bsl_note="Filoviruses are handled at BSL-4 as a class."),
@@ -316,6 +353,12 @@ GROUP_DEFAULTS = {
     "Peribunyaviridae": dict(bsl=2, risk_group=2,
                              bsl_note="Most orthobunyaviruses are BSL-2; "
                                       "neuroinvasive species are BSL-3."),
+    "Phenuiviridae": dict(bsl=2, risk_group=2,
+                          bsl_note="The sandfly fever phleboviruses -- "
+                                   "Toscana, Naples, Sicilian -- are BSL-2. "
+                                   "Rift Valley fever virus is BSL-3 and a "
+                                   "select agent, and the bandaviruses "
+                                   "(SFTS, Heartland) are BSL-3."),
     "Orthoherpesviridae": dict(bsl=2, risk_group=2,
                                bsl_note="Human herpesviruses are BSL-2; "
                                         "B virus is the exception."),
@@ -323,40 +366,236 @@ GROUP_DEFAULTS = {
                            bsl_note="BSL-2; poliovirus is additionally under "
                                     "WHO containment."),
     "Papillomaviridae": dict(bsl=2, risk_group=2, bsl_note="BSL-2."),
+    "Polyomaviridae": dict(bsl=2, risk_group=2,
+                           bsl_note="BSL-2. BK, JC and Merkel cell "
+                                    "polyomavirus are ubiquitous and cause "
+                                    "disease mainly under immunosuppression; "
+                                    "the containment question is handling, "
+                                    "not transmissibility."),
     "Caliciviridae": dict(bsl=2, risk_group=2, bsl_note="BSL-2."),
     "Adenoviridae": dict(bsl=2, risk_group=2, bsl_note="BSL-2."),
+    "Astroviridae": dict(bsl=2, risk_group=2,
+                         bsl_note="BSL-2, as an enteric virus transmitted by "
+                                  "the faecal-oral route."),
     "Flaviviridae": dict(bsl=2, risk_group=2,
                          bsl_note="BSL-2 for most; neuroinvasive and "
                                   "haemorrhagic species are BSL-3 or BSL-4."),
+    "Hepaciviridae": dict(bsl=2, risk_group=2,
+                          bsl_note="Hepatitis C virus is BSL-2, handled with "
+                                   "blood-borne pathogen precautions. There "
+                                   "is no vaccine, so sharps control is the "
+                                   "whole of prevention; post-exposure, "
+                                   "curative antiviral treatment exists."),
+    "Hepadnaviridae": dict(bsl=2, risk_group=2,
+                           vaccine_offer="Hepatitis B vaccination required "
+                                         "for anyone handling the virus",
+                           bsl_note="Hepatitis B virus is BSL-2 with "
+                                    "blood-borne pathogen precautions. The "
+                                    "infectious dose by percutaneous "
+                                    "exposure is very low, which is why "
+                                    "vaccination is required rather than "
+                                    "offered."),
+    "Kolmioviridae": dict(bsl=2, risk_group=2,
+                          vaccine_offer="Hepatitis B vaccination required -- "
+                                        "it also prevents hepatitis D",
+                          bsl_note="Hepatitis D virus is BSL-2 with "
+                                   "blood-borne pathogen precautions. It "
+                                   "cannot propagate without hepatitis B "
+                                   "virus to supply its envelope, so "
+                                   "immunity to HBV is immunity to HDV."),
+    "Hepeviridae": dict(bsl=2, risk_group=2,
+                        bsl_note="Hepatitis E virus is BSL-2, faecal-oral; "
+                                 "the rat hepevirus now known to infect "
+                                 "humans is handled the same way."),
+    "Matonaviridae": dict(bsl=2, risk_group=2,
+                          vaccine_offer="Rubella immunity documented; "
+                                        "vaccination offered if non-immune",
+                          bsl_note="Rubella virus is BSL-2. The reason for "
+                                   "checking immunity is congenital rubella "
+                                   "syndrome, not laboratory severity."),
+    "Pneumoviridae": dict(bsl=2, risk_group=2,
+                          bsl_note="RSV and human metapneumovirus are BSL-2."),
+    "Paramyxoviridae": dict(bsl=2, risk_group=2,
+                            vaccine_offer="MMR immunity documented for "
+                                          "measles and mumps work",
+                            bsl_note="Mumps, measles and the parainfluenza "
+                                     "viruses are BSL-2. Nipah and Hendra "
+                                     "viruses are BSL-4 and select agents."),
+    "Orthomyxoviridae": dict(bsl=2, risk_group=2,
+                             vaccine_offer="Seasonal influenza vaccination "
+                                           "offered",
+                             bsl_note="Seasonal influenza A, B and C are "
+                                      "BSL-2. Highly pathogenic avian "
+                                      "strains including H5N1 and H7N9 need "
+                                      "BSL-3 with enhancements, and Bourbon "
+                                      "virus is BSL-3."),
+    "Coronaviridae": dict(bsl=2, risk_group=2,
+                          bsl_note="The seasonal human coronaviruses -- "
+                                   "229E, NL63, OC43, HKU1 -- are BSL-2. "
+                                   "SARS-CoV, SARS-CoV-2 and MERS-CoV are "
+                                   "BSL-3."),
     "Togaviridae": dict(bsl=2, risk_group=2,
                         bsl_note="BSL-2 for arthritogenic alphaviruses; the "
                                  "encephalitic ones are BSL-3."),
+    "Retroviridae": dict(bsl=2, risk_group=2,
+                         bsl_note="HIV and HTLV are BSL-2 with blood-borne "
+                                  "pathogen precautions, and BSL-3 practices "
+                                  "for high-titre or large-volume work. "
+                                  "There is no vaccine; post-exposure "
+                                  "prophylaxis is the control for HIV."),
+    "Rhabdoviridae": dict(bsl=2, risk_group=2,
+                          bsl_note="BSL-2 for the vesiculoviruses, including "
+                                   "vesicular stomatitis and Chandipura "
+                                   "viruses. The lyssaviruses are handled "
+                                   "separately: BSL-3, or BSL-2 with "
+                                   "pre-exposure vaccination for rabies "
+                                   "virus itself."),
+    "Poxviridae": dict(bsl=2, risk_group=2,
+                       vaccine_offer="Smallpox vaccination offered for "
+                                     "orthopoxvirus work",
+                       bsl_note="BSL-2 for the zoonotic parapoxviruses (orf, "
+                                "pseudocowpox, sealpox), cowpox, tanapox and "
+                                "molluscum contagiosum. Mpox is BSL-3 and "
+                                "variola virus BSL-4, held in two "
+                                "repositories only."),
+    "Parvoviridae": dict(bsl=2, risk_group=2,
+                         bsl_note="Parvovirus B19 and the bocaviruses are "
+                                  "BSL-2; B19 matters for staff who are or "
+                                  "may become pregnant. The "
+                                  "dependoparvoviruses (AAV) are BSL-1 as "
+                                  "wild-type, and are assessed on the "
+                                  "transgene when used as vectors."),
+    "Sedoreoviridae": dict(bsl=2, risk_group=2,
+                           bsl_note="Rotaviruses and the human-infecting "
+                                    "orbiviruses and seadornaviruses are "
+                                    "BSL-2. African horse sickness and "
+                                    "bluetongue viruses are regulated animal "
+                                    "pathogens with requirements of their "
+                                    "own."),
+    "Spinareoviridae": dict(bsl=2, risk_group=2,
+                            bsl_note="Mammalian orthoreoviruses and Colorado "
+                                     "tick fever virus are BSL-2."),
+    # Found in people by sequencing, with no established disease. There is no
+    # published containment assignment to quote for any of these, so the
+    # level is the conservative one for human-derived material and the note
+    # says so rather than implying a citation exists.
+    "Anelloviridae": dict(bsl=2, risk_group=2,
+                          bsl_note="No published containment assignment. "
+                                   "Torque teno viruses are present in most "
+                                   "healthy people and cause no recognised "
+                                   "disease; BSL-2 here reflects handling "
+                                   "human blood, not the agent."),
+    "Circoviridae": dict(bsl=2, risk_group=2,
+                         bsl_note="No published containment assignment for "
+                                  "the human-detected circo- and "
+                                  "cycloviruses, which are sequencing "
+                                  "findings without established disease. "
+                                  "BSL-2 reflects handling clinical "
+                                  "material."),
+    "Genomoviridae": dict(bsl=2, risk_group=2,
+                          bsl_note="No published containment assignment. "
+                                   "Gemykibiviruses are metagenomic findings "
+                                   "in human samples with no established "
+                                   "disease; the hosts of this family are "
+                                   "thought to be fungi."),
+    "Redondoviridae": dict(bsl=2, risk_group=2,
+                           bsl_note="No published containment assignment. "
+                                    "Redondoviruses are found in the human "
+                                    "oral and respiratory tract by "
+                                    "sequencing, with no established "
+                                    "disease."),
+    "Pecoviridae": dict(bsl=2, risk_group=2,
+                        bsl_note="No published containment assignment; known "
+                                 "from human metagenomes without "
+                                 "established disease."),
+    "Picobirnaviridae": dict(bsl=2, risk_group=2,
+                             bsl_note="No published containment assignment. "
+                                      "Picobirnaviruses are found in human "
+                                      "and animal faeces, and are now "
+                                      "thought to infect gut bacteria rather "
+                                      "than the vertebrate itself."),
 }
 
-# Host groups for which no human containment question arises.
+# ICTV host tokens that raise no human containment question.
 NON_HUMAN_HOSTS = ("bacteria", "archaea", "plants", "fungi", "algae",
                    "protists", "invertebrates")
 
+# Tokens that are a sampling environment, not a host: these species are known
+# from a metagenome and ICTV records no organism they infect.
+NO_HOST = ("soil", "freshwater", "marine", "sewage", "air", "phytobiome",
+           "unknown")
 
-def get(species, family=None, host=None):
-    """Containment record for a species, with provenance of the assignment."""
+
+def host_tokens(host):
+    """ICTV's host field as a set of tokens.
+
+    Split and compared whole, never as substrings, because "invertebrates"
+    contains "vertebrates": testing for the substring put every one of the
+    1,311 invertebrate-only viruses on the vertebrate side of the question
+    and denied them the Risk Group 1 answer they should have had.
+
+    "(S)" marks a host inferred from sequence data rather than isolation. It
+    does not change which organism is named, so it is dropped.
+    """
+    return {t.strip().replace("(s)", "").strip()
+            for t in (host or "").lower().split(",") if t.strip()}
+
+
+def get(species, family=None, host=None, genus=None, tier=None):
+    """Containment record for a species, with provenance of the assignment.
+
+    Always answers. Where there is no level to give, it says so and says why,
+    because a page that simply omits the block cannot be told apart from one
+    where the question does not arise.
+
+    `tier` is this atlas' own human-pathogenicity verdict, and it overrides
+    the host-range shortcut. ICTV records only the vector for some
+    arboviruses, so host range alone called Nepuyo, Northway, Ebi and Tacheng
+    tick viruses Risk Group 1 -- agents unlikely to infect anyone -- on the
+    same pages that call them human pathogens.
+    """
     hit = BIOSAFETY.get(species)
     if hit:
         return {**hit, "basis": "species", **_expand(hit)}
-    low = (host or "").lower()
-    if low and not any(k in low for k in ("vertebrates", "human")) \
-            and any(k in low for k in NON_HUMAN_HOSTS):
+
+    grp = GENUS_DEFAULTS.get(genus)
+    if grp:
+        rec = {"select_agent": None, **grp}
+        return {**rec, "basis": "genus", "genus": genus, **_expand(rec)}
+
+    tokens = host_tokens(host)
+    infects_people = tier in ("established", "probable", "possible")
+    if tokens and not infects_people \
+            and not (tokens & {"vertebrates", "human", "humans"}) \
+            and tokens <= set(NON_HUMAN_HOSTS):
         rec = dict(bsl=1, risk_group=1, select_agent=None,
                    bsl_note="No vertebrate host recorded by ICTV, so this is "
                             "handled as a Risk Group 1 agent; containment is "
                             "driven by the host organism, not the virus.")
         return {**rec, "basis": "host-range", **_expand(rec)}
+
     grp = GROUP_DEFAULTS.get(family)
     if grp:
         rec = {"select_agent": None, **grp}
-        return {**rec, "basis": "family",
-                "family": family, **_expand(rec)}
-    return None
+        return {**rec, "basis": "family", "family": family, **_expand(rec)}
+
+    if tokens and tokens <= set(NO_HOST):
+        rec = dict(bsl=None, risk_group=None, select_agent=None,
+                   bsl_note="ICTV records a sampling environment rather than "
+                            "a host: this species is known from sequence in "
+                            f"{', '.join(sorted(tokens))} and no organism it "
+                            "infects has been identified. Nothing can be "
+                            "assigned from host range, and no containment "
+                            "level has been published for it.")
+        return {**rec, "basis": "no-host", **_expand(rec)}
+
+    rec = dict(bsl=None, risk_group=None, select_agent=None,
+               bsl_note="No containment level is recorded here. A vertebrate "
+                        "host is on record, so the question does arise, but "
+                        "neither this species nor its family has a published "
+                        "assignment in this atlas. Treat it as requiring a "
+                        "local risk assessment rather than as low-risk.")
+    return {**rec, "basis": "unassigned", **_expand(rec)}
 
 
 def _expand(rec):
