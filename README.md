@@ -359,7 +359,7 @@ Beyond the profile, each species page carries whatever of these applies:
   agents, phase 2/3 data with NCT numbers, investigational agents. Graded by
   evidence quality rather than by how widely a drug is used, which is why
   tecovirimat appears as *conflicting* (PALM007 and STOMP both failed) and
-  remdesivir likewise. 69 verified references.
+  remdesivir likewise.
 - **Receptor & cell tropism** (39) — entry receptors kept separate from
   attachment factors, plus why the receptor explains the disease.
 - **Biosafety & containment** — BSL, WHO risk group, US select-agent status,
@@ -504,7 +504,9 @@ human case ever reported, and saying so is different from either hiding the
 finding or implying a human risk.
 
 Every therapeutic claim carries a PMID, and all of them are machine-verified
-against Europe PMC by `python -m atlas.update --check-refs`. This check exists
+against Europe PMC by `python -m atlas.update --check-refs` — 118 citations
+across the therapeutics and profile layers, every one resolving to the title
+stored beside it. This check exists
 because the first draft of that layer used recalled identifiers and most of
 them resolved to unrelated papers. A resolving PMID shows the paper exists and
 is cited correctly — not that it supports the claim.

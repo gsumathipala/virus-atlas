@@ -163,7 +163,7 @@ def surveil_prune():
 
 
 def check_refs(verbose=True):
-    """Resolve every therapeutics citation against Europe PMC.
+    """Resolve every citation in the atlas against Europe PMC.
 
     Written because the first draft of atlas/therapeutics.py carried PMIDs
     recalled rather than looked up, and most of them resolved to unrelated
@@ -180,7 +180,7 @@ def check_refs(verbose=True):
     import re
     import time
     import urllib.parse
-    from atlas import therapeutics
+    from atlas import profiles, therapeutics
 
     STOP = {"et", "al", "the", "and", "for", "with", "in", "of", "a", "an",
             "to", "on", "vs", "versus", "study", "trial", "group", "n", "engl",
@@ -193,11 +193,24 @@ def check_refs(verbose=True):
         return {w for w in re.findall(r"[a-z0-9-]{3,}", (text or "").lower())
                 if w not in STOP}
 
-    refs = therapeutics.all_refs()
+    # Both layers that cite literature. The profiles were added after 28 of
+    # their references turned out to be labels rather than citations --
+    # "VEE epidemiology reviews", "HFRS reviews" -- which a reader cannot
+    # follow and this check could not see.
+    refs = [{**r, "layer": "therapeutics"} for r in therapeutics.all_refs()]
+    for species, prof in profiles.P.items():
+        for r in prof.get("refs") or []:
+            if r.get("pmid") or r.get("doi"):
+                refs.append({**r, "layer": f"profiles/{species}"})
     bad, weak = [], []
     for ref in refs:
         pmid, doi = ref.get("pmid"), ref.get("doi")
-        query = f"EXT_ID:{pmid}" if pmid else f'DOI:"{doi}"'
+        # SRC:MED pins it to PubMed. EXT_ID alone collides across Europe PMC's
+        # sources -- 570581 is both a 1978 Nigerian arbovirus serosurvey in
+        # MED and a paper on fermentation wastewater treatment in CBA -- and
+        # the unpinned query returned whichever came first, reporting a
+        # correct citation as a mismatch.
+        query = f"EXT_ID:{pmid} AND SRC:MED" if pmid else f'DOI:"{doi}"'
         url = ("https://www.ebi.ac.uk/europepmc/webservices/rest/search?query="
                + urllib.parse.quote(query) + "&format=json&pageSize=1&resultType=core")
         try:
@@ -219,12 +232,14 @@ def check_refs(verbose=True):
         time.sleep(0.1)
 
     if verbose:
-        print(f"therapeutics references: {len(refs)} checked, "
-              f"{len(bad)} unresolved, {len(weak)} resolved but not matching")
+        print(f"citations: {len(refs)} checked, {len(bad)} unresolved, "
+              f"{len(weak)} resolved but not matching")
         for r in bad:
-            print(f"  UNRESOLVED  {r.get('pmid') or r.get('doi')}  {r['label'][:70]}")
+            print(f"  UNRESOLVED  {r.get('pmid') or r.get('doi')}  "
+                  f"[{r.get('layer')}] {r['label'][:60]}")
         for r in weak:
-            print(f"  MISMATCH    {r.get('pmid') or r.get('doi')}")
+            print(f"  MISMATCH    {r.get('pmid') or r.get('doi')}  "
+                  f"[{r.get('layer')}]")
             print(f"      claimed: {r['label'][:78]}")
             print(f"      actual : {r['actual']}")
     return bad, weak

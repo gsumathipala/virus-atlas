@@ -814,9 +814,11 @@ _t("Alphavirus chikungunya",
         "refs": [{"pmid": "42030337", "label": "Post-chikungunya chronic arthralgia: frequency and associations. 2026"}]},
    ],
    investigational=[
-       {"drug": "IXCHIQ and Vimkunya vaccines", "class": "Prevention, not treatment",
-        "note": "Live-attenuated and VLP vaccines now licensed in some "
-                "jurisdictions — the therapeutic gap remains complete."},
+       {"drug": "Vimkunya and IXCHIQ vaccines", "class": "Prevention, not treatment",
+        "note": "A virus-like particle vaccine is licensed, and the "
+                "live-attenuated one that came first has been withdrawn from "
+                "the US market — the therapeutic gap remains complete either "
+                "way."},
    ],
    note="Months to years of disabling polyarthralgia with no specific "
         "treatment is the real burden of this infection, and it is "

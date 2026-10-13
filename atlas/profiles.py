@@ -602,7 +602,8 @@ profile(
     ],
     refs=[
         {"label": "PAHO/WHO Oropouche epidemiological alerts, 2024–2025", "url": "https://www.paho.org/en/topics/oropouche"},
-        {"label": "Oropouche fever reviews, Lancet Infect Dis / NEJM 2024–2025"},
+        {"label": "Emergence of Oropouche fever in Latin America: a narrative review. Lancet Infect Dis 2024", "pmid": "38281494", "doi": "10.1016/s1473-3099(23)00740-5"},
+          {"label": "Oropouche Fever: A Review. Viruses 2018", "pmid": "29617280", "doi": "10.3390/v10040175"},
     ],
 )
 
@@ -624,7 +625,7 @@ profile(
         "Decades of veterinary surveillance with no substantiated human disease, despite intense human exposure in endemic livestock regions.",
         "Serves as the comparator that frames why Simbu-serogroup viruses are screened for teratogenicity.",
     ],
-    refs=[{"label": "OIE/WOAH Akabane disease technical disease card"}],
+    refs=[{"label": "Epizootic congenital arthrogryposis-hydranencephaly syndrome in cattle: isolation of Akabane virus from affected fetuses. Arch Virol 1976", "pmid": "962588", "doi": "10.1007/bf01317835"}],
 )
 
 profile(
@@ -645,7 +646,7 @@ profile(
         "Targeted serological studies of highly exposed European farmers and veterinarians after the 2011–2012 epizootic found no or non-specific reactivity, arguing against zoonotic potential.",
         "Included here because its close relatives in the same species (Sathuperi, Shamonda) circulate in regions with weaker human surveillance.",
     ],
-    refs=[{"label": "ECDC rapid risk assessment: Schmallenberg virus, 2012"}],
+    refs=[{"label": "Lack of evidence for zoonotic transmission of Schmallenberg virus. Emerg Infect Dis 2012", "pmid": "23092696", "doi": "10.3201/eid1811.120650"}],
 )
 
 profile(
@@ -666,7 +667,7 @@ profile(
         "Recurrent detection in neurological cases in South African horses and ruminants.",
         "Human seropositivity among occupationally exposed groups; causal attribution remains open.",
     ],
-    refs=[{"label": "Shuni virus neurological disease, South Africa — Emerg Infect Dis"}],
+    refs=[{"label": "Shuni Virus in Cases of Neurologic Disease in Humans, South Africa. Emerg Infect Dis 2021", "pmid": "33496223", "doi": "10.3201/eid2702.191551"}],
 )
 
 profile(
@@ -686,7 +687,7 @@ profile(
     evidence=[
         "Clade-level serological surveys cannot separate Manzanilla from Cat Que/Oya without sequencing, so human exposure data for the clade are pooled and hard to attribute.",
     ],
-    refs=[{"label": "Manzanilla clade phylogenetics — see Cat Que / Oya references"}],
+    refs=[{"label": "Manzanilla virus: a new virus isolated from the blood of a howler monkey in Trinidad, W.I. Am J Trop Med Hyg 1960", "pmid": "13793362", "doi": "10.4269/ajtmh.1960.9.78"}],
 )
 
 profile(
@@ -724,7 +725,7 @@ profile(
     management="Supportive.",
     prevention="Mosquito avoidance.",
     evidence=["Original 1943 isolations from encephalitis cases in California defined the serogroup."],
-    refs=[{"label": "California serogroup virus reviews"}],
+    refs=[{"label": "Throw out the Map: Neuropathogenesis of the Globally Expanding California Serogroup of Orthobunyaviruses. Viruses 2019", "pmid": "31470541", "doi": "10.3390/v11090794"}],
 )
 
 profile(
@@ -760,7 +761,7 @@ profile(
     management="Supportive.",
     prevention="Mosquito avoidance in floodplain habitats.",
     evidence=["Seroprevalence up to 60% in some central European populations with clinically characterised 'Valtice fever' cases."],
-    refs=[{"label": "Ťahyňa virus epidemiology reviews"}],
+    refs=[{"label": "Tahyna virus and human infection, China. Emerg Infect Dis 2009", "pmid": "19193280", "doi": "10.3201/eid1502.080722"}],
 )
 
 profile(
@@ -781,7 +782,7 @@ profile(
         "Bunyamwera virus isolated from humans and mosquitoes in Uganda (1943) — the genus prototype and the standard laboratory model.",
         "Ngari virus recovered from haemorrhagic fever patients during the 1997–1998 East African outbreak, demonstrating that orthobunyavirus reassortment can create new human pathogens.",
     ],
-    refs=[{"label": "Ngari virus and East African haemorrhagic fever — J Clin Microbiol / Science reports"}],
+    refs=[{"label": "Ngari virus is a Bunyamwera virus reassortant that can be associated with large outbreaks of hemorrhagic fever in Africa. J Virol 2004", "pmid": "15280501", "doi": "10.1128/jvi.78.16.8922-8926.2004"}],
 )
 
 profile(
@@ -801,7 +802,7 @@ profile(
     evidence=[
         "Human seroprevalence across Europe and Asia with sporadic isolations; its principal recognised importance is as a reassortment partner.",
     ],
-    refs=[{"label": "Batai virus reviews"}],
+    refs=[{"label": "Batai and Ngari viruses: M segment reassortment and association with severe febrile disease outbreaks in East Africa. J Virol 2006", "pmid": "16699043", "doi": "10.1128/jvi.02448-05"}],
 )
 
 profile(
@@ -819,7 +820,8 @@ profile(
     management="Supportive.",
     prevention="Mosquito avoidance.",
     evidence=["Several well-documented human neuroinvasive and fatal cases confirmed virologically in the US and Canada."],
-    refs=[{"label": "Cache Valley virus human disease case series"}],
+    refs=[{"label": "Second human case of Cache Valley virus disease. Emerg Infect Dis 2006", "pmid": "16704854", "doi": "10.3201/eid1205.051625"},
+          {"label": "Cache valley virus in a patient diagnosed with aseptic meningitis. J Clin Microbiol 2013", "pmid": "23515536", "doi": "10.1128/jcm.00252-13"}],
 )
 
 profile(
@@ -837,7 +839,7 @@ profile(
     management="Supportive.",
     prevention="Vector avoidance.",
     evidence=["Repeated isolations from febrile patients in Peruvian and Colombian surveillance cohorts."],
-    refs=[{"label": "Guaroa virus febrile illness, Peru — Am J Trop Med Hyg"}],
+    refs=[{"label": "Guaroa virus infection among humans in Bolivia and Peru. Am J Trop Med Hyg 2010", "pmid": "20810845", "doi": "10.4269/ajtmh.2010.10-0116"}],
 )
 
 profile(
@@ -855,7 +857,7 @@ profile(
     management="Supportive.",
     prevention="Protective clothing and repellents during forest work.",
     evidence=["Numerous isolations from febrile humans in Brazilian and Peruvian sentinel surveillance."],
-    refs=[{"label": "Group C orthobunyaviruses in Amazonian febrile illness"}],
+    refs=[{"label": "Molecular epidemiology of group C viruses (Bunyaviridae, Orthobunyavirus) isolated in the Americas. J Virol 2005", "pmid": "16051848", "doi": "10.1128/jvi.79.16.10561-10570.2005"}],
 )
 
 profile(
@@ -873,7 +875,7 @@ profile(
     management="Supportive.",
     prevention="Vector avoidance.",
     evidence=["Human isolations documented since the 1950s Belém arbovirus programme."],
-    refs=[{"label": "Belém (Instituto Evandro Chagas) arbovirus isolations"}],
+    refs=[{"label": "Molecular and antigenic characterization of group C orthobunyaviruses isolated in Peru. PLoS One 2018", "pmid": "30024910", "doi": "10.1371/journal.pone.0200576"}],
 )
 
 profile(
@@ -891,7 +893,7 @@ profile(
     management="Supportive.",
     prevention="Mosquito control.",
     evidence=["Isolated from febrile patients in Uganda (1937) with very high regional seroprevalence since confirmed."],
-    refs=[{"label": "Bwamba fever epidemiology"}],
+    refs=[{"label": "Molecular characterization of human pathogenic bunyaviruses of the Nyando and Bwamba/Pongola virus groups leads to the genetic identification of Mojuí dos Campos and Kaeng Khoi virus. PLoS Negl Trop Dis 2014", "pmid": "25188437", "doi": "10.1371/journal.pntd.0003147"}],
 )
 
 profile(
@@ -909,7 +911,7 @@ profile(
     management="Supportive.",
     prevention="Vector avoidance.",
     evidence=["Multiple isolations from human febrile cases in Nigeria, Senegal and Cameroon."],
-    refs=[{"label": "Tataguine virus human isolations"}],
+    refs=[{"label": "Tataguine virus isolations from humans in Nigeria, 1971-1975. Trans R Soc Trop Med Hyg 1981", "pmid": "6800075", "doi": "10.1016/0035-9203(81)90414-4"}],
 )
 
 profile(
@@ -927,7 +929,8 @@ profile(
     management="Supportive.",
     prevention="Vector avoidance.",
     evidence=["Human isolations from Nigeria and Central African Republic; case reports of severe disease."],
-    refs=[{"label": "Ilesha virus case reports"}],
+    refs=[{"label": "Ilesha virus: a new aetiological agent of haemorrhagic fever in Madagascar. Trans R Soc Trop Med Hyg 1994", "pmid": "8036675", "doi": "10.1016/0035-9203(94)90297-6"},
+          {"label": "Human arthropod-borne virus infections in Nigeria. Serological and virological investigations and Shaki, Oyo State. J Hyg Epidemiol Microbiol Immunol 1978", "pmid": "570581"}],
 )
 
 profile(
@@ -969,7 +972,7 @@ profile(
     management="Supportive.",
     prevention="Mosquito avoidance.",
     evidence=["Sporadic virologically supported human CNS cases in Canada."],
-    refs=[{"label": "Snowshoe hare virus encephalitis, Canada"}],
+    refs=[{"label": "Major emerging vector-borne zoonotic diseases of public health importance in Canada. Emerg Microbes Infect 2015", "pmid": "26954882", "doi": "10.1038/emi.2015.33"}],
 )
 
 # ---------------------------------------------------------------------------
@@ -1081,7 +1084,8 @@ profile(
     management="Supportive.",
     prevention="A formalin-inactivated vaccine is used in Karnataka; tick avoidance and acaricide use in forest workers.",
     evidence=["Continuous outbreak documentation since 1957 with virological confirmation."],
-    refs=[{"label": "Kyasanur Forest disease — ICMR/NIV reviews"}],
+    refs=[{"label": "Epidemiology, Pathogenesis, and Control of a Tick-Borne Disease- Kyasanur Forest Disease: Current Status and Future Directions. Front Cell Infect Microbiol 2018", "pmid": "29868505", "doi": "10.3389/fcimb.2018.00149"},
+          {"label": "Kyasanur forest disease: a state-of-the-art review. QJM 2022", "pmid": "33196834", "doi": "10.1093/qjmed/hcaa310"}],
 )
 
 profile(
@@ -1115,7 +1119,7 @@ profile(
     incubation="3–7 days.",
     diagnosis="RT-PCR in the first week (viraemia is high), IgM thereafter.",
     management="Analgesia and physiotherapy; chronic arthritis may need rheumatological care.",
-    prevention="Vector control; the live-attenuated vaccine IXCHIQ and the VLP vaccine VIMKUNYA are now licensed in several jurisdictions.",
+    prevention="Vector control; the virus-like particle vaccine Vimkunya is licensed from 12 years of age. The live-attenuated IXCHIQ was licensed first, but its US licence was suspended in August 2025 and the application withdrawn in January 2026 after vaccine-strain encephalitis and other serious adverse events.",
     evidence=["High-titre viraemia readily detected in patients; laboratory-confirmed epidemics affecting millions."],
     refs=[{"label": "WHO chikungunya fact sheet", "url": "https://www.who.int/news-room/fact-sheets/detail/chikungunya"}],
 )
@@ -1153,7 +1157,8 @@ profile(
     management="Supportive.",
     prevention="Equine vaccination (which interrupts amplification), vector control, and biosafety containment in laboratories.",
     evidence=["Human isolations from thousands of cases during the 1962–1971 and 1995 epidemics; documented aerosol laboratory infections."],
-    refs=[{"label": "VEE epidemiology reviews"}],
+    refs=[{"label": "Venezuelan equine encephalitis virus: the problem is not over for tropical America. Ann Clin Microbiol Antimicrob 2020", "pmid": "32429942", "doi": "10.1186/s12941-020-00360-4"},
+          {"label": "Current Understanding of the Molecular Basis of Venezuelan Equine Encephalitis Virus Pathogenesis and Vaccine Development. Viruses 2019", "pmid": "30781656", "doi": "10.3390/v11020164"}],
 )
 
 profile(
@@ -1171,7 +1176,7 @@ profile(
     management="Analgesia and graded exercise.",
     prevention="Mosquito avoidance; no vaccine.",
     evidence=["Thousands of serologically confirmed notifications annually with a well-defined clinical syndrome."],
-    refs=[{"label": "Australian Department of Health RRV surveillance"}],
+    refs=[{"label": "Ross River virus transmission, infection, and disease: a cross-disciplinary review. Clin Microbiol Rev 2001", "pmid": "11585790", "doi": "10.1128/cmr.14.4.909-932.2001"}],
 )
 
 profile(
@@ -1208,7 +1213,8 @@ profile(
     management="Supportive.",
     prevention="Sandfly avoidance (fine mesh is needed — standard nets let sandflies through), repellents.",
     evidence=["Routinely identified in CSF of Mediterranean meningitis patients; in some series the second most common cause after enteroviruses."],
-    refs=[{"label": "Toscana virus reviews, Clin Microbiol Infect"}],
+    refs=[{"label": "Acute meningitis due to Toscana virus infection among patients from both the Spanish Mediterranean region and the region of Madrid. J Clin Virol 2003", "pmid": "12589837", "doi": "10.1016/s1386-6532(02)00041-0"},
+          {"label": "Sandfly fever due to Toscana virus: an emerging infection in southern France. Eur J Intern Med 2004", "pmid": "15450990", "doi": "10.1016/j.ejim.2004.05.006"}],
 )
 
 profile(
@@ -1226,7 +1232,7 @@ profile(
     management="Supportive. Favipiravir has been trialled with uncertain benefit; plasma exchange used in severe cases.",
     prevention="Tick avoidance, protective measures in animal handling, strict infection control for contact with patients' blood and secretions.",
     evidence=["Identified in 2009–2011 from clusters in central China; thousands of confirmed cases with documented person-to-person and animal-to-human transmission."],
-    refs=[{"label": "SFTSV reviews, Lancet Infect Dis / NEJM"}],
+    refs=[{"label": "Epidemiological and clinical features of laboratory-diagnosed severe fever with thrombocytopenia syndrome in China, 2011-17: a prospective observational study. Lancet Infect Dis 2018", "pmid": "30054190", "doi": "10.1016/s1473-3099(18)30293-7"}],
 )
 
 profile(
@@ -1316,7 +1322,8 @@ profile(
     management="Immune plasma given within 8 days of onset reduces mortality to below 1% — one of the clearest demonstrations of passive immunotherapy in viral disease.",
     prevention="The live-attenuated Candid#1 vaccine, used in agricultural workers, has cut incidence dramatically.",
     evidence=["Randomised and controlled studies of immune plasma and of Candid#1 vaccination give high-quality causal and interventional evidence."],
-    refs=[{"label": "Argentine haemorrhagic fever and Candid#1 vaccine literature"}],
+    refs=[{"label": "Protective efficacy of a live attenuated vaccine against Argentine hemorrhagic fever. AHF Study Group. J Infect Dis 1998", "pmid": "9466512", "doi": "10.1086/514211"},
+          {"label": "Treatment of Argentine hemorrhagic fever. Antiviral Res 2008", "pmid": "18054395", "doi": "10.1016/j.antiviral.2007.10.010"}],
 )
 
 profile(
@@ -1334,7 +1341,7 @@ profile(
     management="Supportive with careful fluid balance and renal replacement therapy; early ribavirin has shown benefit in HFRS.",
     prevention="Rodent control, dust-avoidance precautions; inactivated vaccines (Hantavax) used in Korea and China.",
     evidence=["Identified in 1976 from Apodemus lung tissue after the Korean War epidemic of ~3000 UN troops; abundant confirmed clinical data since."],
-    refs=[{"label": "HFRS reviews"}],
+    refs=[{"label": "Hemorrhagic Fever with Renal Syndrome: Literature Review, Epidemiology, Clinical Picture and Pathogenesis. Infect Chemother 2022", "pmid": "35384417", "doi": "10.3947/ic.2021.0148"}],
 )
 
 profile(
@@ -1388,7 +1395,8 @@ profile(
     management="Supportive with ECMO; contact tracing and isolation are warranted, unlike for other hantaviruses.",
     prevention="Rodent control plus respiratory and contact precautions for cases.",
     evidence=["Epidemiological and genomic evidence of interhuman chains, including the El Bolsón 1996 and Epuyén 2018 outbreaks."],
-    refs=[{"label": "Andes virus person-to-person transmission, NEJM / Emerg Infect Dis"}],
+    refs=[{"label": "Person-to-person transmission of Andes virus. Emerg Infect Dis 2005", "pmid": "16485469", "doi": "10.3201/eid1112.050501"},
+          {"label": "\"Super-Spreaders\" and Person-to-Person Transmission of Andes Virus in Argentina. N Engl J Med 2020", "pmid": "33264545", "doi": "10.1056/nejmoa2009040"}],
 )
 
 profile(
@@ -1445,7 +1453,7 @@ profile(
     management="Supportive; m102.4 monoclonal antibody available on compassionate grounds.",
     prevention="An equine vaccine (Equivac HeV) interrupts the transmission route to humans; PPE for veterinary work on sick horses.",
     evidence=["Each human case virologically confirmed with an identified equine source since the 1994 Brisbane outbreak."],
-    refs=[{"label": "Hendra virus — Australian Government and Queensland Health"}],
+    refs=[{"label": "Human Hendra virus encephalitis associated with equine outbreak, Australia, 2008. Emerg Infect Dis 2010", "pmid": "20113550", "doi": "10.3201/eid1602.090552"}],
 )
 
 profile(
@@ -1615,7 +1623,8 @@ profile(
     management="Supportive.",
     prevention="Mosquito avoidance; sentinel chicken surveillance guides public warnings.",
     evidence=["Confirmed encephalitis cases in Australian epidemics of 1951, 1974 and 2011."],
-    refs=[{"label": "MVEV — Australian arbovirus surveillance reports"}],
+    refs=[{"label": "Murray Valley encephalitis: a review of clinical features, diagnosis and treatment. Med J Aust 2012", "pmid": "22432670", "doi": "10.5694/mja11.11026"},
+          {"label": "The changing epidemiology of Murray Valley encephalitis in Australia: the 2011 outbreak and a review of the literature. PLoS Negl Trop Dis 2014", "pmid": "24466360", "doi": "10.1371/journal.pntd.0002656"}],
 )
 
 profile(
@@ -1633,7 +1642,7 @@ profile(
     management="Supportive.",
     prevention="Protective equipment for guano harvesters and cave researchers.",
     evidence=["Human seropositivity among guano collectors; occupational exposure is the main concern."],
-    refs=[{"label": "Kaeng Khoi virus in bat caves, Thailand"}],
+    refs=[{"label": "Kaeng Khoi virus from naturally infected bedbugs (cimicidae) and immature free-tailed bats. Bull World Health Organ 1976", "pmid": "1086729"}],
 )
 
 

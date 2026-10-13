@@ -70,8 +70,11 @@ _c("Enterovirus coxsackiepol",
              "Oral poliovirus vaccine (OPV, Sabin) — bivalent and "
              "monovalent type 2",
              "Novel OPV2 (nOPV2), genetically stabilised against reversion"],
-   antivirals=["Pocapavir — investigational, used for chronic excretors",
-               "Pocapavir and V-073 under compassionate use only"],
+   antivirals=["Pocapavir (V-073, SCH-48973) — capsid inhibitor, "
+               "investigational, used for chronic excretors under "
+               "compassionate access",
+               "V-7404 — protease inhibitor, in development as a combination "
+               "partner to suppress resistance"],
    prophylaxis=[],
    note="OPV gives mucosal immunity and interrupts transmission, but reverts "
         "to cause circulating vaccine-derived poliovirus; IPV protects the "
@@ -418,14 +421,21 @@ for sp, note in [
 
 
 _c("Alphavirus chikungunya",
-   vaccines=["IXCHIQ (VLA1553), live attenuated single dose",
-             "Vimkunya (PXVX0317), virus-like particle"],
+   vaccines=["Vimkunya (PXVX0317), virus-like particle, from 12 years of age",
+             "IXCHIQ (VLA1553), live attenuated single dose — US licence "
+             "suspended and the application withdrawn"],
    antivirals=[],
    prophylaxis=[],
-   note="The first chikungunya vaccines, licensed from 2023-2024 in the US, "
-        "EU and UK. There is still no antiviral, and chronic arthralgia has "
-        "no specific treatment. Serious adverse events in older recipients "
-        "led to a restriction on IXCHIQ in some jurisdictions.")
+   note="The first chikungunya vaccines, from 2023-2025, and the live one has "
+        "since been taken off the US market. FDA suspended IXCHIQ's biologics "
+        "licence on 22 August 2025 after 21 hospitalisations and 3 deaths "
+        "among reported serious adverse events, one of them an encephalitis "
+        "death attributed directly to the vaccine with vaccine-strain virus "
+        "in the cerebrospinal fluid; Valneva withdrew the US licence "
+        "application and IND on 19 January 2026. Vimkunya, a non-replicating "
+        "virus-like particle vaccine, is the FDA-approved option. There is "
+        "still no antiviral, and chronic arthralgia has no specific "
+        "treatment.")
 
 _c("Orthohantavirus hantanense",
    vaccines=["Hantavax, inactivated — licensed in South Korea only"],
