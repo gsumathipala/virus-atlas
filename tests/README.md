@@ -1,6 +1,6 @@
 # Tests
 
-Seventeen suites that drive the running application in [jsdom][] and assert on
+Eighteen suites that drive the running application in [jsdom][] and assert on
 the resulting DOM, plus the tooling used to look at the SVG the app produces.
 
 There is no browser in the environment this was built in, which shapes
@@ -63,6 +63,10 @@ for 2,611 species, and no isolates, and nothing here noticed.
 | `static` | The static build end to end: tree, search, radial, travel, differential, index |
 | `subpath` | The static build served from `/virus-atlas/`, as Pages serves it |
 | `parity` | Static and Flask answer the same JSON, field by field |
+| `cycle` | Every transmission figure draws how *people* are infected — not an evolutionary origin |
+
+`cycle` needs no server at all: it loads `figures.js` directly and renders
+every profile, so it runs in a second and is the cheapest check in here.
 
 `parity` is the one that needs both servers up at once — Flask on :5057 and
 the static build on :5070 — because it asks each the same questions and diffs

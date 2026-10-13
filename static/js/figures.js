@@ -68,6 +68,15 @@ const F = (() => {
       <path d="M15 36c-9 2-11 9-5 12" class="tail"/>
       <path d="M24 45v5M34 45v5"/>
     </g>`,
+    dog: `<g class="ic">
+      <ellipse cx="29" cy="34" rx="16" ry="10"/>
+      <circle cx="47" cy="30" r="8"/>
+      <path d="M55 31l6 1-6 3z"/>
+      <circle cx="50" cy="28" r="1.4" class="dot"/>
+      <path d="M43 22l-3-9 8 5z" class="wing"/>
+      <path d="M20 44v7M29 45v6M37 44v7"/>
+      <path d="M13 31c-4-6-1-11 4-9" class="tail"/>
+    </g>`,
     bat: `<g class="ic">
       <ellipse cx="32" cy="34" rx="5" ry="9"/>
       <circle cx="32" cy="22" r="5"/>
@@ -649,31 +658,109 @@ const F = (() => {
     [/aedes|culex|anopheles|mosquito|culiseta|coquillettidia|psorophora|haemagogus|sabethes|ochlerotatus/i, 'mosquito', 'Mosquito'],
   ];
   const HOST_ICONS = [
-    [/\bbat|pteropus|rousettus|flying fox|chiropter/i, 'bat', 'Bats'],
+    [/\bbats?\b|pteropus|rousettus|flying fox|chiropter/i, 'bat', 'Bats'],
     [/rodent|mouse|mice|rat\b|vole|mastomys|peromyscus|calomys|apodemus|myodes|oligoryzomys|chipmunk|squirrel|gerbil/i, 'rodent', 'Rodents'],
-    [/\bpig|swine|porcine|boar/i, 'pig', 'Pigs'],
+    [/\bpigs?\b|swine|porcine|\bboars?\b/i, 'pig', 'Pigs'],
     [/bird|avian|passerine|corvid|ardeid|heron|egret|poultry|myna|duck/i, 'bird', 'Birds'],
     [/primate|monkey|macaque|chimpanz|langur|baboon/i, 'primate', 'Primates'],
     [/cattle|cow|bovine|buffalo|ruminant/i, 'cattle', 'Cattle'],
     [/sheep|goat|caprine|ovine|lamb/i, 'sheep', 'Sheep & goats'],
-    [/horse|equine|equid/i, 'horse', 'Horses'],
+    // \bhorses?\b, not /horse/: "Horseshoe bats" is the SARS-CoV-2 reservoir
+    // and matching "horse" in it drew a horse.
+    [/\bhorses?\b|equine|equid/i, 'horse', 'Horses'],
     [/sloth|bradypus/i, 'sloth', 'Sloths'],
     [/hare|rabbit|lagomorph|hedgehog/i, 'rodent', 'Hares & rabbits'],
     [/deer|cervid|macropod|kangaroo|wallaby/i, 'cattle', 'Deer & macropods'],
-    [/\bcat\b|\bdog\b|feline|canine|carnivor/i, 'rodent', 'Carnivores'],
+    // "Domestic dogs" is how the rabies profile puts it, and \bdog\b does not
+    // match "dogs": the word boundary needs a non-word character after it.
+    // The pattern therefore missed every dog in the atlas, and rabies -- the
+    // virus that kills 59,000 people a year, almost all of them bitten by a
+    // dog -- was drawn with a bat reservoir.
+    [/\bdogs?\b|canine|\bfox(es)?\b|raccoon|skunk|jackal|mongoose/i, 'dog', 'Dogs & wild carnivores'],
+    [/\bcats?\b|feline|carnivor|civet|mustelid|ferret|mink/i, 'rodent', 'Carnivores'],
     [/human/i, 'human', 'Humans'],
   ];
 
-  const pickIcon = (text, table, fallback) => {
-    for (const [rx, ico, label] of table) if (rx.test(text || '')) return { ico, label };
-    return fallback;
+  /* The host a piece of prose names FIRST, not the first entry in the table
+     that happens to match.
+   *
+   * Table order had been deciding, and "Humans" is last, so any animal
+   * mentioned anywhere won: dengue, chikungunya and Zika were all drawn with
+   * primates as the reservoir on the strength of a trailing clause about
+   * sylvatic cycles, when their reservoir is people. */
+  /* The reservoir a profile states outright, where prose cannot be read.
+     "vertebrate reservoirs incompletely defined (dogs and cats implicated)"
+     is not a claim that dogs are the reservoir, and "sloths" is the one that
+     matters for Oropouche even though primates are listed first. */
+  const HOST_STATED = {
+    unknown: { ico: 'cell', label: 'Vertebrate host' },
   };
+
+  const hostIcon = (p, text, fallback) => {
+    if (p && p.host) {
+      if (HOST_STATED[p.host]) return HOST_STATED[p.host];
+      const row = HOST_ICONS.find(([, ico]) => ico === p.host);
+      if (row) return { ico: row[1], label: row[2] };
+    }
+    return pickIcon(text, HOST_ICONS, fallback);
+  };
+
+  const pickIcon = (text, table, fallback) => {
+    // "non-human primates" contains "human", and matching it there made
+    // yellow fever -- whose sylvatic reservoir is exactly that -- come out as
+    // a human reservoir. Blanked to the same length so positions still line
+    // up, and so "primates" is still there to be found.
+    const hay = (text || '').replace(/non-?\s?human/gi, m => '\u00b7'.repeat(m.length));
+    let best = null;
+    for (const [rx, ico, label] of table) {
+      const m = rx.exec(hay);
+      if (m && (best === null || m.index < best.at)) best = { at: m.index, ico, label };
+      rx.lastIndex = 0;
+    }
+    return best ? { ico: best.ico, label: best.label } : fallback;
+  };
+
+  /* Which cycle to draw.
+   *
+   * `p.cycle`, where the profile states it, and otherwise inferred from the
+   * prose. The inference is kept for the profiles that do not need it, but
+   * it is the weaker path and the reason this field exists: prose cannot
+   * distinguish the route that infects people from an evolutionary origin or
+   * a sylvatic aside, and reading it as if it could produced figures that
+   * said the wrong thing. HIV was drawn as primate-to-human, which is the
+   * 20th-century spillover and not how anyone acquires HIV; SARS-CoV-2 as
+   * bats via contaminated food; rabies as a bat reservoir when dogs cause
+   * almost all human cases; mpox as aerosolised rodent excreta; and Hendra
+   * as person-to-person, when every human case has come from a horse and
+   * none from another person. */
+  function cycleOf(p, hasVector, transmission, reservoir) {
+    if (p.cycle) return p.cycle;
+    if (hasVector) return 'vector';
+    if (/rodent|excreta|aerosolis|inhalation/i.test(transmission)) return 'rodent-excreta';
+    if (/bat|intermediate host/i.test(transmission + reservoir)) {
+      return /pig|horse|equine|date palm/i.test(transmission)
+        ? 'intermediate' : 'wildlife-contact';
+    }
+    if (/respiratory|aerosol|droplet/i.test(transmission)) return 'respiratory';
+    return 'direct';
+  }
+
+  /** The onward person-to-person arrow, where spread does not stop at the
+      first case. Offset so it runs diagonally; a vertical one put its label
+      straight through the "Humans" caption. */
+  function addOnward(nodes, arrows) {
+    nodes.push({ x: 474, y: 212, ico: 'human', label: 'Further cases',
+                 sub: 'nosocomial spread' });
+    arrows.push([474, 212, 436, 96, 'person-to-person', 36]);
+  }
 
   function transmissionFigure(p, meta) {
     const vectorText = (p.vectors || []).join('; ');
     const hasVector = !!vectorText && !/^none/i.test(vectorText);
     const transmission = p.transmission || '';
     const reservoir = p.reservoir || '';
+    const cycle = cycleOf(p, hasVector, transmission, reservoir);
+    const personToPerson = /person-to-person|nosocomial|human-to-human/i.test(transmission);
 
     const w = 520, h = 268;
     const nodes = [];
@@ -682,9 +769,9 @@ const F = (() => {
     const human = { x: 430, y: 92, ico: 'human', label: 'Humans',
                     sub: /dead-end/i.test(reservoir) ? 'dead-end host' : null };
 
-    if (hasVector) {
+    if (cycle === 'vector') {
       const v = pickIcon(vectorText, VECTOR_ICONS, { ico: 'mosquito', label: 'Arthropod vector' });
-      const res = pickIcon(reservoir, HOST_ICONS, { ico: 'bird', label: 'Vertebrate host' });
+      const res = hostIcon(p, reservoir, { ico: 'bird', label: 'Vertebrate host' });
       nodes.push({ x: 84, y: 92, ...res, sub: 'reservoir / amplifying host' });
       nodes.push({ x: 257, y: 186, ...v, sub: 'vector' });
       nodes.push(human);
@@ -693,39 +780,71 @@ const F = (() => {
       if (/human.*amplif|urban cycle|human[–-]mosquito[–-]human/i.test(transmission)) {
         arrows.push([430, 92, 257, 186, 'amplifies']);
       }
-    } else if (/rodent|excreta|aerosolis|inhalation/i.test(transmission)) {
-      const res = pickIcon(reservoir, HOST_ICONS, { ico: 'rodent', label: 'Rodent reservoir' });
+    } else if (cycle === 'rodent-excreta') {
+      const res = hostIcon(p, reservoir, { ico: 'rodent', label: 'Rodent reservoir' });
       nodes.push({ x: 110, y: 110, ...res, sub: 'persistently infected' });
       nodes.push({ x: 268, y: 110, ico: 'droplet', label: 'Aerosolised excreta', sub: 'urine, droppings, dust' });
       nodes.push({ ...human, x: 430, y: 110 });
       arrows.push([110, 110, 268, 110, 'shed'], [268, 110, 430, 110, 'inhaled']);
-    } else if (/bat|intermediate host/i.test(transmission + reservoir)) {
-      nodes.push({ x: 92, y: 96, ico: 'bat', label: 'Bat reservoir', sub: 'subclinical infection' });
-      const inter = /pig|horse|equine|date palm/i.test(transmission)
-        ? (/horse|equine/i.test(transmission)
-            ? { ico: 'horse', label: 'Horses', sub: 'intermediate host' }
-            : { ico: 'pig', label: 'Pigs / contaminated sap', sub: 'intermediate' })
-        : { ico: 'droplet', label: 'Contaminated food', sub: 'spillover route' };
+    } else if (cycle === 'intermediate') {
+      const res = hostIcon(p, reservoir, { ico: 'bat', label: 'Bat reservoir' });
+      nodes.push({ x: 92, y: 96, ...res, sub: 'subclinical infection' });
+      const inter = /horse|equine/i.test(transmission + reservoir)
+        ? { ico: 'horse', label: 'Horses', sub: 'intermediate host' }
+        : { ico: 'pig', label: 'Pigs / contaminated sap', sub: 'intermediate' };
       nodes.push({ x: 262, y: 170, ...inter });
       nodes.push({ ...human, x: 436, y: 96 });
       arrows.push([92, 96, 262, 170, 'spillover'], [262, 170, 436, 96, 'contact']);
-      if (/person-to-person|nosocomial/i.test(transmission)) {
-        // Offset so the arrow runs diagonally; a vertical one put its label
-        // straight through the "Humans" caption.
-        nodes.push({ x: 474, y: 212, ico: 'human', label: 'Further cases', sub: 'nosocomial spread' });
-        arrows.push([474, 212, 436, 96, 'person-to-person', 36]);
+      if (personToPerson) addOnward(nodes, arrows);
+    } else if (cycle === 'wildlife-contact') {
+      // The spillover is contact with the animal or its carcass. It used to
+      // be drawn as "Contaminated food", which is a route Ebola, Marburg and
+      // rabies do not have.
+      const res = hostIcon(p, reservoir, { ico: 'bat', label: 'Wildlife reservoir' });
+      nodes.push({ x: 92, y: 96, ...res, sub: 'subclinical infection' });
+      nodes.push({ x: 262, y: 170, ico: 'droplet', label: 'Contact with the animal',
+                   sub: 'carcass, secretions, guano' });
+      nodes.push({ ...human, x: 436, y: 96 });
+      arrows.push([92, 96, 262, 170, 'spillover'], [262, 170, 436, 96, 'contact']);
+      if (personToPerson) addOnward(nodes, arrows);
+    } else if (cycle === 'animal-bite') {
+      const res = hostIcon(p, reservoir, { ico: 'rodent', label: 'Infected mammal' });
+      nodes.push({ x: 120, y: 110, ...res, sub: 'reservoir' });
+      nodes.push({ x: 275, y: 110, ico: 'droplet', label: 'Saliva', sub: 'bite or scratch' });
+      nodes.push({ ...human, x: 430, y: 110 });
+      arrows.push([120, 110, 275, 110, 'bite'], [275, 110, 430, 110, 'inoculated']);
+    } else if (cycle === 'blood-sexual') {
+      // No animal in this figure. The reservoir is people; where a profile
+      // records a cross-species origin, that is ancestry, not a route, and
+      // drawing it said that primates give people HIV.
+      nodes.push({ x: 110, y: 110, ico: 'human', label: 'Infected person' });
+      nodes.push({ x: 268, y: 110, ico: 'droplet', label: 'Blood, sex, birth',
+                   sub: 'and breastfeeding' });
+      nodes.push({ x: 430, y: 110, ico: 'human', label: 'Susceptible person' });
+      arrows.push([110, 110, 268, 110, 'shed'], [268, 110, 430, 110, 'acquired']);
+    } else if (cycle === 'close-contact') {
+      nodes.push({ x: 110, y: 110, ico: 'human', label: 'Infected person' });
+      nodes.push({ x: 268, y: 110, ico: 'droplet', label: 'Skin and sexual contact',
+                   sub: 'lesions, fomites' });
+      nodes.push({ x: 430, y: 110, ico: 'human', label: 'Susceptible person' });
+      arrows.push([110, 110, 268, 110, 'lesions'], [268, 110, 430, 110, 'contact']);
+      if (/zoonotic|rodent|reservoir/i.test(transmission)) {
+        const res = hostIcon(p, reservoir, { ico: 'rodent', label: 'Wildlife' });
+        nodes.push({ x: 150, y: 214, ...res, sub: 'occasional spillover' });
+        arrows.push([150, 214, 110, 110, 'zoonotic', 34]);
       }
-    } else if (/respiratory|aerosol|droplet/i.test(transmission)) {
+    } else if (cycle === 'respiratory') {
       nodes.push({ x: 110, y: 110, ico: 'human', label: 'Infected person' });
       nodes.push({ x: 268, y: 110, ico: 'droplet', label: 'Respiratory aerosols', sub: 'droplets & aerosol' });
       nodes.push({ x: 430, y: 110, ico: 'human', label: 'Susceptible person' });
       arrows.push([110, 110, 268, 110, 'exhaled'], [268, 110, 430, 110, 'inhaled']);
     } else {
-      const res = pickIcon(reservoir || transmission, HOST_ICONS, { ico: 'cell', label: 'Host' });
+      const res = hostIcon(p, reservoir || transmission, { ico: 'cell', label: 'Host' });
       nodes.push({ x: 130, y: 110, ...res, sub: 'source' });
       nodes.push({ ...human, x: 390, y: 110 });
       arrows.push([130, 110, 390, 110, 'direct contact']);
     }
+
 
     const arrowArt = arrows.map(([x1, y1, x2, y2, label, off = 16], i) => {
       const dx = x2 - x1, dy = y2 - y1;

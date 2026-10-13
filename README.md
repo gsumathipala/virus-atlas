@@ -106,12 +106,23 @@ no stock art, so they stay sharp at any size and recolour with the theme.
 - **Genome map** — one coloured bar per segment or gene, annotated with
   genome type and approximate size. Oya virus shows its three bunyaviral
   segments: L (polymerase), M (Gn/Gc glycoproteins), S (N nucleoprotein).
-- **Transmission cycle** — reservoir → vector → human, drawn from the recorded
-  vectors and reservoir, with hand-drawn cartoons for mosquito, midge, tick,
-  sandfly, bat, rodent, pig, bird, primate, cattle, sheep, horse, sloth and
-  more. The diagram adapts to the route: arthropod-borne, rodent-excreta,
-  bat-spillover with an intermediate host, respiratory, or direct contact,
-  including a nosocomial loop where person-to-person spread is documented.
+- **Transmission cycle** — the route by which *people* are infected, with
+  hand-drawn cartoons for mosquito, midge, tick, sandfly, bat, rodent, pig,
+  bird, primate, cattle, sheep, horse, dog, sloth and more. Nine shapes:
+  arthropod-borne, rodent-excreta, spillover through an intermediate host,
+  contact with wildlife, an animal bite, respiratory, close and sexual
+  contact, blood-borne, and plain direct contact — with a nosocomial loop
+  where person-to-person spread is documented.
+
+  Which one is drawn is **stated by the profile**, not inferred from its
+  prose. Inferring it produced figures that said something false, because
+  prose cannot separate the route from an evolutionary origin or a sylvatic
+  cycle: HIV was drawn as primate-to-human, which is the 20th-century
+  spillover and not how anybody acquires HIV; SARS-CoV-2 as bats via
+  contaminated food; rabies with a bat reservoir, though dogs cause almost
+  all of the 59,000 annual deaths; mpox as aerosolised rodent excreta; and
+  Hendra as person-to-person, when every human case has come from a horse and
+  none from another person. `tests/cycle.js` asserts the node chain of all 57.
 - **Distribution map** — a world choropleth shading the countries where the
   virus is reported, for the 220 species whose range the atlas can place. It
   comes from a curated country list where there is one, otherwise from

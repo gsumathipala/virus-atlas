@@ -387,8 +387,13 @@ function speciesPlates(d) {
   }
 
   if (p && (p.transmission || p.vectors?.length)) {
+    // The caption says which route is drawn, because the figure shows one:
+    // the way people are infected now, not an evolutionary origin and not a
+    // sylvatic cycle that no longer reaches anyone.
     out += figure(F.transmissionFigure(p, m), 'Transmission cycle.',
-      `${p.transmission} Drawn from the recorded vectors and reservoir; a schematic of the principal route, not every documented pathway.`,
+      `${p.transmission} A schematic of the principal route by which people
+       are infected${p.reservoir ? `, with the reservoir as recorded above` : ''} —
+       not every documented pathway, and not where the virus came from.`,
       'wide');
   }
 

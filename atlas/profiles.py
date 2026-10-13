@@ -583,6 +583,7 @@ profile(
 
 profile(
     "Orthobunyavirus oropoucheense",
+    host="sloth",
     names=["Oropouche virus (OROV)", "Iquitos virus (IQTV)", "Madre de Dios virus", "Perdões virus", "Pintupo virus"],
     tier="established",
     headline="The most important human pathogen of the Simbu serogroup and, after dengue, one of the most frequent arboviral febrile illnesses in the Amazon basin. Major expansion across the Americas from 2023–2024.",
@@ -1194,6 +1195,7 @@ profile(
 
 profile(
     "Phlebovirus toscanaense",
+    host="unknown",
     names=["Toscana virus (TOSV)"],
     tier="established",
     headline="A leading cause of summer aseptic meningitis around the Mediterranean, transmitted by sandflies.",
@@ -1392,6 +1394,7 @@ profile(
 
 profile(
     "Lyssavirus rabies",
+    cycle="animal-bite",
     names=["rabies virus (RABV)"],
     tier="established",
     headline="Effectively 100% fatal once clinical, yet entirely preventable by prompt post-exposure prophylaxis; ~59,000 deaths annually, mostly from dog bites.",
@@ -1410,6 +1413,7 @@ profile(
 
 profile(
     "Henipavirus nipahense",
+    cycle="intermediate",
     names=["Nipah virus (NiV)"],
     tier="established",
     headline="Bat-borne paramyxovirus with case fatality of 40–75% and documented person-to-person transmission; a WHO priority pathogen requiring BSL-4 handling.",
@@ -1428,6 +1432,7 @@ profile(
 
 profile(
     "Henipavirus hendraense",
+    cycle="intermediate",
     names=["Hendra virus (HeV)"],
     tier="established",
     headline="Australian henipavirus transmitted from flying foxes via horses; rare but highly lethal in humans.",
@@ -1446,6 +1451,7 @@ profile(
 
 profile(
     "Betacoronavirus pandemicum",
+    cycle="respiratory",
     names=["SARS-CoV-2", "SARS coronavirus (SARS-CoV)"],
     tier="established",
     headline="Sarbecovirus subgenus; SARS-CoV caused the 2002–2004 SARS epidemic and SARS-CoV-2 the COVID-19 pandemic.",
@@ -1464,6 +1470,7 @@ profile(
 
 profile(
     "Orthoebolavirus zairense",
+    cycle="wildlife-contact",
     names=["Ebola virus (EBOV)"],
     tier="established",
     headline="Filovirus causing Ebola disease, with case fatality historically 25–90%; now treatable with monoclonal antibodies and preventable by vaccination.",
@@ -1482,6 +1489,7 @@ profile(
 
 profile(
     "Orthomarburgvirus marburgense",
+    cycle="wildlife-contact",
     names=["Marburg virus (MARV)", "Ravn virus (RAVV)"],
     tier="established",
     headline="The first filovirus recognised (Marburg, 1967), with case fatality in outbreaks of 24–88%; no licensed vaccine or therapeutic.",
@@ -1500,6 +1508,7 @@ profile(
 
 profile(
     "Orthopoxvirus monkeypox",
+    cycle="close-contact",
     names=["monkeypox virus (MPXV)"],
     tier="established",
     headline="Orthopoxvirus causing mpox; clade I is more virulent, clade II drove the 2022 global outbreak through sexual networks.",
@@ -1518,6 +1527,7 @@ profile(
 
 profile(
     "Orthopoxvirus variola",
+    cycle="respiratory",
     names=["variola virus (VARV)"],
     tier="established",
     headline="Cause of smallpox — the only human disease ever eradicated (certified 1980). Retained only in two WHO-authorised repositories.",
@@ -1536,6 +1546,7 @@ profile(
 
 profile(
     "Lentivirus humimdef1",
+    cycle="blood-sexual",
     names=["human immunodeficiency virus 1 (HIV-1)"],
     tier="established",
     headline="Retrovirus causing AIDS; roughly 40 million people live with HIV and antiretroviral therapy has transformed it into a manageable chronic infection.",
@@ -1554,6 +1565,7 @@ profile(
 
 profile(
     "Morbillivirus hominis",
+    cycle="respiratory",
     names=["measles virus (MeV)"],
     tier="established",
     headline="One of the most contagious human viruses (R0 of 12–18), vaccine-preventable, and a cause of lasting immune amnesia.",
@@ -1572,6 +1584,7 @@ profile(
 
 profile(
     "Alphainfluenzavirus influenzae",
+    cycle="respiratory",
     names=["influenza A virus (IAV)"],
     tier="established",
     headline="Segmented orthomyxovirus with an avian reservoir, causing seasonal epidemics and periodic pandemics through antigenic shift and reassortment.",
