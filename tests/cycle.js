@@ -26,14 +26,25 @@ global.window = {};
 new Function('window', fs.readFileSync(path.join(ROOT, 'static/js/figures.js'), 'utf8'))(global.window);
 const F = global.window.F;
 
-// The profiles, straight from the curated source.
+// The profiles as the application sees them: out of data/atlas.json, not out
+// of profiles.py. They are not the same thing -- atlas.json is a build
+// artifact -- and reading the source directly let this suite pass while the
+// running app drew the old figures, because `python -m atlas.build` had not
+// been re-run after the profiles changed.
 const profs = JSON.parse(execFileSync(
   fs.existsSync(path.join(ROOT, '.venv/bin/python')) ? path.join(ROOT, '.venv/bin/python') : 'python3',
-  ['-c', `import json, sys; sys.path.insert(0, ${JSON.stringify(ROOT)})
-from atlas import profiles
-print(json.dumps({n: {k: p.get(k) for k in ('cycle','host','vectors','reservoir','transmission')}
-                  for n, p in profiles.P.items()}))`],
-  { encoding: 'utf8', cwd: ROOT }));
+  ['-c', `import json, sys, io, contextlib
+sys.path.insert(0, ${JSON.stringify(ROOT)})
+with contextlib.redirect_stdout(io.StringIO()):
+    import app
+out = {}
+for node in app.NODES.values():
+    prof = (node.get("meta") or {}).get("profile")
+    if node["rank"] == "species" and prof:
+        out[node["name"]] = {k: prof.get(k) for k in
+                             ("cycle", "host", "vectors", "reservoir", "transmission")}
+print(json.dumps(out))`],
+  { encoding: 'utf8', cwd: ROOT, maxBuffer: 64 * 1024 * 1024 }));
 
 // What each of these must draw, left to right. Chosen because each one was
 // wrong, or is the kind of case that goes wrong.

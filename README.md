@@ -324,9 +324,18 @@ plus ancestry for deep-linking from a search hit.
 ### Adding a virus profile
 
 Append a `profile(...)` call in `atlas/profiles.py`, keyed by the exact ICTV
-species binomial, and rebuild. The build prints how many profiles matched a
-species; a typo shows up as a lower count. To extend serogroups, add epithets
-(the second word of the binomial) to `SEROGROUPS` in `atlas/serogroups.py`.
+species binomial, and **rebuild** — `data/atlas.json` is a build artifact, and
+until `python -m atlas.build` runs again the application still serves the old
+profile. The build prints how many profiles matched a species; a typo shows up
+as a lower count. To extend serogroups, add epithets (the second word of the
+binomial) to `SEROGROUPS` in `atlas/serogroups.py`.
+
+Set `cycle=` on anything whose transmission figure would otherwise be inferred
+wrongly — `"vector"`, `"rodent-excreta"`, `"intermediate"`,
+`"wildlife-contact"`, `"animal-bite"`, `"respiratory"`, `"close-contact"`,
+`"blood-sexual"` or `"direct"` — and `host=` where the reservoir prose hedges
+or buries the animal that matters. `tests/cycle.js` reads the built atlas, so
+it fails if the rebuild was forgotten.
 
 ## Interface
 
