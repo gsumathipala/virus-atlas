@@ -121,6 +121,18 @@ def findings(nodes, species_id):
             flag("human", name, "reference key matches no ICTV species")
         if tier not in TIERS + ("animal-only", "no-evidence", "unassessed"):
             flag("human", name, f"unknown tier {tier!r}")
+        # `no-evidence` asserts no reported human infection. A note that
+        # reports one contradicts the badge on the same line, which is how
+        # adeno-associated virus came to be labelled "No human evidence"
+        # beside the words "near-universal human infection".
+        if tier == "no-evidence" and re.search(
+                r"human infection|seroconver|infects humans|in humans", note, re.I) \
+                and not re.search(r"no (confirmed |reported )?human "
+                                  r"(infection|case)|not reported|unproven|"
+                                  r"no human case", note, re.I):
+            flag("human", name,
+                 f'tier is no-evidence but the note reports human infection: '
+                 f'"{note[:70]}"')
         if name in profiles.P and profiles.P[name].get("tier") != tier:
             flag("human", name,
                  f"reference tier {tier!r} != profile tier "
@@ -206,6 +218,20 @@ def findings(nodes, species_id):
             flag("morphology", node["name"],
                  f'page draws {spec["segments"]} segments; the accessions '
                  f'under it show {hint}')
+
+    # ---------------------------------------------------------- serogroups
+    # A species placed twice. Six epithets were listed twice inside their own
+    # group, which inflated the placement count and is the signature of a
+    # copy-paste slip. Group names are not checked against their members:
+    # Sarbecovirus, Anopheles A and California are named after a subgenus, a
+    # vector and a place, so no member's epithet need match.
+    from atlas import serogroups as _sg
+    for genus, groups in _sg.SEROGROUPS.items():
+        seen = Counter(e for eps in groups.values() for e in eps)
+        for ep, n in sorted(seen.items()):
+            if n > 1:
+                flag("serogroups", f"{genus} {ep}",
+                     f"placed {n} times within this genus")
 
     # ---------------------------------------------------------- morphology
     # Keys in the family table that no longer name a family. They are

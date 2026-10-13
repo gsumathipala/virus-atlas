@@ -833,6 +833,15 @@ const F = (() => {
         nodes.push({ x: 150, y: 214, ...res, sub: 'occasional spillover' });
         arrows.push([150, 214, 110, 110, 'zoonotic', 34]);
       }
+    } else if (cycle === 'faecal-oral') {
+      // The enteric route, which the atlas had no shape for, and which most
+      // of its unprofiled established pathogens use.
+      const res = hostIcon(p, reservoir, { ico: 'human', label: 'Infected person' });
+      nodes.push({ x: 110, y: 110, ...res, sub: 'sheds in stool' });
+      nodes.push({ x: 268, y: 110, ico: 'droplet', label: 'Water or food',
+                   sub: 'faecal contamination' });
+      nodes.push({ ...human, x: 430, y: 110 });
+      arrows.push([110, 110, 268, 110, 'shed'], [268, 110, 430, 110, 'ingested']);
     } else if (cycle === 'respiratory') {
       nodes.push({ x: 110, y: 110, ico: 'human', label: 'Infected person' });
       nodes.push({ x: 268, y: 110, ico: 'droplet', label: 'Respiratory aerosols', sub: 'droplets & aerosol' });

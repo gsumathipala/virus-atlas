@@ -74,6 +74,16 @@ const WANT = {
   'Orthobunyavirus oropoucheense':['Sloths', 'Biting midge', 'Humans'],
   'Phlebovirus toscanaense':      ['Vertebrate host', 'Sandfly', 'Humans'],
   'Mammarenavirus lassaense':     ['Rodents', 'Aerosolised excreta', 'Humans'],
+  // The blood-borne and hepatitis profiles, added after an audit found 116
+  // established human pathogens with none. No animal belongs in any of these.
+  'Deltaretrovirus priTlym1':     ['Infected person', 'Blood, sex, birth', 'Susceptible person'],
+  'Lentivirus humimdef2':         ['Infected person', 'Blood, sex, birth', 'Susceptible person'],
+  'Orthohepadnavirus hominoidei': ['Infected person', 'Blood, sex, birth', 'Susceptible person'],
+  'Orthohepacivirus hominis':     ['Infected person', 'Blood, sex, birth', 'Susceptible person'],
+  'Deltavirus italiense':         ['Infected person', 'Blood, sex, birth', 'Susceptible person'],
+  'Paslahepevirus balayani':      ['Humans', 'Water or food', 'Humans'],
+  'Hepatovirus ahepa':            ['Humans', 'Water or food', 'Humans'],
+  'Orthopneumovirus hominis':     ['Infected person', 'Respiratory aerosols', 'Susceptible person'],
 };
 
 const unesc = s => s.replace(/&amp;/g, '&').replace(/&#39;/g, "'")

@@ -175,8 +175,8 @@ Every tier records **which layer decided it**, shown on the virus page:
 
 | Basis | Species | What it means |
 | --- | --- | --- |
-| `profile` | 57 | A curated briefing, assessed against published evidence |
-| `reference` | 285 | The human-pathogen reference list in `atlas/human.py` |
+| `profile` | 65 | A curated briefing, assessed against published evidence |
+| `reference` | 278 | The human-pathogen reference list in `atlas/human.py` |
 | `vmr-name` | 78 | ICTV's own record names human-derived isolates |
 | `host-range` | 13,251 | No vertebrate host at all, so humans are not expected |
 | `unassessed` | 3,883 | Not examined here |
@@ -412,6 +412,28 @@ python -m atlas.update --taxonomy     # fetch the current ICTV VMR and rebuild
 python -m atlas.update --live         # refresh WHO and Nextstrain caches
 python -m atlas.update --check-refs   # verify every citation
 ```
+
+### The validation pass
+
+Every curated layer has been read against the literature or against the
+authority it claims to follow, and the corrections are in the git history
+rather than summarised here. In outline: all 39 receptor records (4 errors),
+all 75 containment records against the US select-agent lists (4 errors), all
+98 particle specs (1 gap), all 258 reference-list entries (10 tier errors),
+all 465 serogroup placements (6 duplicates), all 48 countermeasure and 19
+therapeutics records with their 24 numeric claims (2 errors), and all 149
+numeric claims across the profiles (none). 28 profiles cited labels rather
+than papers; they now cite 37 real ones, and
+`python -m atlas.update --check-refs` resolves all 133 citations to the title
+stored beside each.
+
+What has *not* been done, stated plainly: the antigenic placements in
+`atlas/serogroups.py` are consistent with classical serology as far as group
+membership goes, but verifying all 465 against the original
+complement-fixation and neutralisation papers has not been attempted. The 36
+family-level containment defaults are defensible readings of BMBL and the WHO
+manual rather than quotations from a list. And 127 established or probable
+human pathogens still have no profile.
 
 `atlas.audit` looks for *disagreement* rather than for truth. Most of the
 curated claims can only be validated against the literature, one at a time, by

@@ -75,7 +75,7 @@ SEROGROUPS = {
         "Tataguine serogroup": ["tataguineense"],
         "Kaeng Khoi serogroup": ["kaengkhoiense"],
         "Witwatersrand serogroup": ["witwatersrandense", "wolkbergense", "baakalense"],
-        "Thimiri / minor & ungrouped": [
+        "Minor and ungrouped orthobunyaviruses": [
             "anadyrense", "sedlecense", "heptayabaense", "trinitiense",
             "taniyamense", "tangaense", "nesszionaense", "taiense",
         ],
@@ -135,7 +135,7 @@ SEROGROUPS = {
             "getah", "bebaru", "middelburg", "ndumu", "una",
             "barmah",
         ],
-        "Aquatic / divergent alphaviruses": ["salmon", "seal", "seal"],
+        "Aquatic / divergent alphaviruses": ["salmon", "seal"],
         "Insect-specific alphaviruses": ["eilat", "caaingua", "trocara"],
     },
 
@@ -143,7 +143,7 @@ SEROGROUPS = {
         "Old World (Lassa–LCM) complex": [
             "lassaense", "choriomeningitidis", "mopeiaense", "lujoense",
             "ippyense", "praomyidis", "merinoense", "gairoense", "lunaense",
-            "lunkense", "marientalense", "marientalense", "okahandjaense",
+            "lunkense", "marientalense", "okahandjaense",
             "dhati-welelense", "kitaleense", "songeaense", "mafigaense",
             "beregaense", "ngerengerense", "solweziense", "kwanzaense",
             "bituense", "ryukyuense", "wenzhouense", "lijiangense",
@@ -152,7 +152,7 @@ SEROGROUPS = {
         ],
         "New World clade A": [
             "paranaense", "piritalense", "flexalense", "allpahuayoense",
-            "caliense", "caliense",
+            "caliense",
         ],
         "New World clade B (haemorrhagic fever group)": [
             "juninense", "machupoense", "guanaritoense", "brazilense",
@@ -168,7 +168,7 @@ SEROGROUPS = {
     "Orthohantavirus": {
         "Murinae-borne (Old World HFRS)": [
             "hantanense", "seoulense", "dobravaense", "sangassouense",
-            "thailandense", "jejuense", "thailandense",
+            "thailandense", "jejuense",
         ],
         "Arvicolinae-borne (nephropathia epidemica group)": [
             "puumalaense", "tulaense", "prospectense", "khabarovskense",
@@ -262,7 +262,7 @@ SEROGROUPS = {
         "Phylogroup I (rabies-related; rabies vaccine cross-protects)": [
             "rabies", "australis", "duvenhage", "hamburg", "helsinki",
             "aravan", "khujand", "irkut", "bokeloh", "gannoruwa",
-            "kotalahti", "formosa", "formosa",
+            "kotalahti", "formosa",
         ],
         "Phylogroup II (poor vaccine cross-protection)": [
             "lagos", "mokola", "shimoni",
@@ -279,7 +279,7 @@ SEROGROUPS = {
             "hipposideri",
         ],
         "Embecovirus (seasonal HCoV-OC43 / HKU1 lineage)": [
-            "gravedinis", "hongkongense", "muris", "muris",
+            "gravedinis", "hongkongense", "muris",
             "ratti",
         ],
         "Nobecovirus / Hibecovirus (bat lineages)": [

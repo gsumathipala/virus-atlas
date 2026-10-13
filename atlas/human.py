@@ -148,7 +148,7 @@ REFERENCE = {
     "Lentivirus humimdef1": (E, "HIV-1. Progressive CD4 T-cell depletion and AIDS."),
     "Lentivirus humimdef2": (E, "HIV-2. AIDS with slower progression and lower transmissibility than HIV-1."),
     "Deltaretrovirus priTlym1": (E, "HTLV-1. Adult T-cell leukaemia/lymphoma and HTLV-1-associated myelopathy."),
-    "Deltaretrovirus priTlym2": (PO, "HTLV-2. Established human infection; disease association limited and contested."),
+    "Deltaretrovirus priTlym2": (PR, "HTLV-2. Infection is established and routinely confirmed by PCR, endemic in Amerindian and injecting-drug-using populations; a myelopathy resembling HAM/TSP is reported, but the association is weaker than for HTLV-1 and there is no leukaemia link."),
     "Deltaretrovirus priTlym3": (PO, "HTLV-3. Human infection detected in central Africa; no disease described."),
 
     # --- Coronaviridae -----------------------------------------------------
@@ -166,7 +166,7 @@ REFERENCE = {
     "Bocaparvovirus primate1": (PR, "Human bocavirus 1. Frequently found in paediatric respiratory illness; causation debated given high co-detection."),
     "Bocaparvovirus primate2": (PO, "Human bocavirus 2-4. Enteric detection; clinical role unresolved."),
     "Protoparvovirus primate1": (PO, "Bufavirus. Detected in stool from children with diarrhoea; significance unresolved."),
-    "Dependoparvovirus primate1": (NO, "Adeno-associated viruses. Near-universal human infection with no known disease; used as a gene-therapy vector."),
+    "Dependoparvovirus primate1": (PO, "Adeno-associated viruses. Human infection is near-universal and no disease has ever been attributed to it — the reason it became the gene-therapy vector of choice. Filed here rather than under no-evidence because that tier means no reported human infection."),
 
     # --- Orthoflavivirus ---------------------------------------------------
     "Orthoflavivirus flavi": (E, "Yellow fever virus. Viscerotropic haemorrhagic fever; vaccine-preventable."),
@@ -180,7 +180,7 @@ REFERENCE = {
     "Orthoflavivirus omskense": (E, "Omsk haemorrhagic fever virus. Tick- and muskrat-associated haemorrhagic fever."),
     "Orthoflavivirus powassanense": (E, "Powassan virus and deer tick virus. Severe tick-borne encephalitis in North America."),
     "Orthoflavivirus usutuense": (PR, "Usutu virus. Human neuroinvasive cases and blood-donor seropositivity in Europe."),
-    "Orthoflavivirus ilheusense": (PR, "Ilhéus and Rocio viruses. Rocio virus caused encephalitis epidemics in Brazil."),
+    "Orthoflavivirus ilheusense": (E, "Ilhéus and Rocio viruses. Rocio virus was isolated in 1975 from the cerebellum of a man who died of encephalitis, during an epidemic of roughly 1,000 cases across twenty coastal counties of São Paulo; Ilhéus virus has its own confirmed encephalitis cases."),
     "Orthoflavivirus wesselsbronense": (PO, "Wesselsbron virus. Febrile illness in exposed and laboratory workers."),
     "Orthoflavivirus banziense": (PO, "Banzi virus. Isolated from a febrile child; rare."),
     "Orthoflavivirus zikaense": (E, "Zika virus. Congenital Zika syndrome and Guillain-Barré syndrome."),
@@ -216,7 +216,7 @@ REFERENCE = {
     "Orthoebolavirus restonense": (AO, "Reston virus. Lethal in macaques and infects pigs; documented asymptomatic seroconversion in exposed human handlers but no human disease in over 30 years. Animal pathogen with proven human exposure, which is not the same as no human infection."),
     "Orthoebolavirus bombaliense": (NO, "Bombali virus. Bat virus; no human infection reported."),
     "Orthomarburgvirus marburgense": (E, "Marburg and Ravn viruses. Marburg disease with high case fatality."),
-    "Cuevavirus lloviuense": (PO, "Lloviu virus. Bat filovirus; no confirmed human infection to date."),
+    "Cuevavirus lloviuense": (NO, "Lloviu virus. Bat filovirus associated with Schreibers bat die-offs in Spain and Hungary; no confirmed human infection to date."),
     "Mammarenavirus lassaense": (E, "Lassa virus. Lassa fever; a leading cause of viral haemorrhagic fever in West Africa."),
     "Mammarenavirus choriomeningitidis": (E, "LCMV. Aseptic meningitis, congenital infection, and fatal transplant-transmitted disease."),
     "Mammarenavirus juninense": (E, "Junín virus. Argentine haemorrhagic fever; vaccine available."),
@@ -243,7 +243,7 @@ REFERENCE = {
     "Orthohantavirus thailandense": (PO, "Thailand virus. Human seropositivity; disease association unconfirmed."),
     "Orthohantavirus tulaense": (PO, "Tula virus. Rare HFRS-like cases, mainly in immunocompromised patients."),
     "Orthohantavirus khabarovskense": (PO, "Khabarovsk virus. Human seropositivity reported; no confirmed disease."),
-    "Orthohantavirus prospectense": (NO, "Prospect Hill virus. Seroconversion in mammalogists without illness."),
+    "Orthohantavirus prospectense": (PO, "Prospect Hill virus. Seroconversion documented in mammalogists and other occupationally exposed people, with no accompanying illness in any of them."),
 
     # --- Nairoviridae / Phenuiviridae --------------------------------------
     "Orthonairovirus haemorrhagiae": (E, "Crimean-Congo haemorrhagic fever virus. Tick-borne haemorrhagic fever with nosocomial spread."),
@@ -295,7 +295,15 @@ REFERENCE = {
     "Orthobunyavirus schmallenbergense": (AO, "Schmallenberg virus. Ruminant congenital malformations; human exposure studies negative."),
 
     # --- Reoviridae relatives -----------------------------------------------
-    "Coltivirus ixodis": (E, "Eyach virus. Tick-borne; associated with meningopolyneuritis in Europe."),
+    # Eyach has never been isolated from a patient. The human link is
+    # serological, in a small number of people with neurological disease in
+    # France and Germany, and CDC's arbovirus catalogue lists it as a possible
+    # arbovirus; a 2016 study describes it as "indirectly associated with human
+    # disease, but never extensively studied". Calling that established put it
+    # above Colorado tick fever virus, which is in the same genus, is isolated
+    # from patients routinely, and was sitting at "unassessed".
+    "Coltivirus ixodis": (PO, "Eyach virus. Serological association with polyradiculoneuritis and meningopolyneuritis in France and Germany; never isolated from a patient."),
+    "Coltivirus dermacentoris": (E, "Colorado tick fever virus. The commonest tick-borne viral infection of the western United States: biphasic 'saddleback' fever with leukopenia and thrombocytopenia, the virus persisting in erythrocytes for weeks after recovery, which is why blood donation is deferred."),
     "Coltivirus kundalense": (PO, "Kundal virus. Detected in tick-exposed patients in India."),
     "Seadornavirus bannaense": (PR, "Banna virus. Isolated from patients with encephalitis and fever in China."),
     "Orbivirus orungoense": (PR, "Orungo virus. Febrile illness in West Africa."),
@@ -308,7 +316,7 @@ REFERENCE = {
     "Orthopoxvirus vaccinia": (E, "Vaccinia virus. Vaccine strain; causes progressive vaccinia, eczema vaccinatum and buffalopox."),
     "Orthopoxvirus cowpox": (E, "Cowpox virus. Localised ulcerating lesions, usually from cats; severe in the immunocompromised."),
     "Orthopoxvirus akhmetapox": (PR, "Akhmeta virus. Human skin lesions reported in Georgia."),
-    "Orthopoxvirus abatinomacacapox": (PO, "Abatino macacapox virus. Zoonotic potential inferred from related orthopoxviruses."),
+    "Orthopoxvirus abatinomacacapox": (NO, "Abatino macacapox virus. Found in a colony of Tonkean macaques in Italy; no human infection reported, and zoonotic potential is inferred from its relatives rather than observed."),
     "Orthopoxvirus taterapox": (NO, "Taterapox virus. Gerbil virus; no human infection reported."),
     "Orthopoxvirus raccoonpox": (NO, "Raccoonpox virus. No human disease reported."),
     "Orthopoxvirus volepox": (NO, "Volepox virus. No human disease reported."),
@@ -319,7 +327,7 @@ REFERENCE = {
     "Parapoxvirus pseudocowpox": (E, "Pseudocowpox virus. Milker's nodule."),
     "Parapoxvirus bovinestomatitis": (E, "Bovine papular stomatitis virus. Occupational hand lesions."),
     "Parapoxvirus sealpox": (E, "Sealpox virus. Occupational nodular skin lesions in seal handlers."),
-    "Parapoxvirus reddeerpox": (PO, "Red deerpox virus. Human infection plausible by analogy; not reported."),
+    "Parapoxvirus reddeerpox": (NO, "Red deerpox virus. No human infection reported; the other parapoxviruses of livestock do infect handlers, so the possibility is not excluded."),
     "Molluscipoxvirus molluscum": (E, "Molluscum contagiosum virus. Umbilicated papules, common in children and in HIV."),
     "Yatapoxvirus tanapox": (E, "Tanapox and Yaba-like disease viruses. Febrile illness with a nodular skin lesion."),
     "Yatapoxvirus yabapox": (PO, "Yaba monkey tumour virus. Subcutaneous tumours in primates; human infection rare."),
@@ -332,7 +340,7 @@ REFERENCE = {
     "Lyssavirus helsinki": (E, "European bat lyssavirus 2. Fatal rabies-like encephalitis in bat handlers."),
     "Lyssavirus irkut": (E, "Irkut virus. Fatal human encephalitis reported in Russia and China."),
     "Lyssavirus caucasicus": (PR, "West Caucasian bat virus. No human case; vaccine escape makes exposure consequential."),
-    "Lyssavirus gannoruwa": (PO, "Gannoruwa bat lyssavirus. Bat virus in Sri Lanka; no human case."),
+    "Lyssavirus gannoruwa": (NO, "Gannoruwa bat lyssavirus. Found in Sri Lankan fruit bats; no human case reported."),
     "Vesiculovirus indiana": (E, "Vesicular stomatitis Indiana virus. Influenza-like illness in exposed livestock and laboratory workers."),
     "Vesiculovirus newjersey": (E, "Vesicular stomatitis New Jersey virus. Influenza-like occupational illness."),
     "Vesiculovirus chandipura": (E, "Chandipura virus. Outbreaks of acute encephalitis with high mortality in Indian children."),

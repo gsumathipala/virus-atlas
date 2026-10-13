@@ -145,7 +145,9 @@ WORLDWIDE = {
     # blood-borne and sexually transmitted
     "Orthohepadnavirus hominoidei", "Deltavirus italiense",
     "Orthohepacivirus hominis",
-    "Lentivirus humimdef2", "Deltaretrovirus priTlym1",
+    # HTLV-1 and HIV-2 are not cosmopolitan: HTLV-1 has sharply defined
+    # endemic foci and HIV-2 is a West African virus. Their geography is
+    # written out in their profiles instead.
     "Alphapapillomavirus 7", "Alphapapillomavirus 9",
     "Alphapapillomavirus 10", "Mupapillomavirus 1",
     # skin and ubiquitous
@@ -159,6 +161,20 @@ WORLDWIDE = {
 }
 
 COUNTRIES = {
+    # HTLV-1's distribution is a set of foci, not a region. Expanding "the
+    # Caribbean", "South America" and "West and Central Africa" out of its
+    # geography prose produced 81 countries.
+    "Deltaretrovirus priTlym1": [
+        "Japan", "Jamaica", "Haiti", "Trinidad and Tobago", "Dominican Rep.",
+        "Brazil", "Peru", "Colombia", "Nigeria", "Cameroon", "Gabon",
+        "Dem. Rep. Congo", "Benin", "Guinea-Bissau", "Iran", "Romania",
+        "Australia",
+    ],
+    "Lentivirus humimdef2": [
+        "Guinea-Bissau", "Senegal", "Gambia", "Cabo Verde", "Mali",
+        "Mauritania", "Sierra Leone", "Côte d'Ivoire", "Ghana", "Nigeria",
+        "Angola", "Mozambique", "Portugal", "France", "India",
+    ],
     # CCHF: Hyalomma ticks and seropositive livestock extend well past the
     # countries with recorded human disease.
     "Orthonairovirus haemorrhagiae": {c: "human" for c in [
@@ -1647,6 +1663,176 @@ profile(
 
 
 # Family- and genus-level orientation text shown when no species profile exists.
+# ---------------------------------------------------------------------------
+# The blood-borne and hepatitis viruses
+# ---------------------------------------------------------------------------
+#
+# Written after an audit found 116 established human pathogens with no profile
+# at all: hepatitis B, C, D and E, hepatitis A, HTLV-1, HIV-2 and respiratory
+# syncytial virus among them. These are the ones a reader is most likely to
+# look up, and the ones whose absence was least defensible.
+
+profile(
+    "Deltaretrovirus priTlym1",
+    cycle="blood-sexual",
+    names=["human T-lymphotropic virus 1 (HTLV-1)"],
+    tier="established",
+    headline="The first human retrovirus discovered, infecting 5-10 million people. Most carry it for life without consequence; a minority develop adult T-cell leukaemia/lymphoma after decades, or a progressive myelopathy.",
+    syndrome="Lifelong asymptomatic carriage in over 90%. Adult T-cell leukaemia/lymphoma (ATL) appears after a latency of forty to sixty years, usually in those infected through breastfeeding, with a lifetime risk of a few per cent; HTLV-1-associated myelopathy/tropical spastic paraparesis (HAM/TSP) in under 4%, presenting as spastic paraparesis with bladder dysfunction. Also infective dermatitis of childhood, uveitis, and Strongyloides hyperinfection, the last because the virus distorts the Th2 response that normally contains the worm.",
+    transmission="Cell-associated, so transmission needs living lymphocytes: breastfeeding (the route that matters for ATL), sexual contact with greater efficiency male-to-female, and transfusion of cellular blood components or shared injecting equipment. Plasma-derived products do not transmit it.",
+    vectors=["None"],
+    reservoir="Humans. STLV-1 in African and Asian primates is its evolutionary relative, but nothing maintains human infection except people.",
+    geography="Sharply defined endemic foci rather than a global distribution: south-western Japan, the Caribbean, parts of South America, West and Central Africa, Iran, Romania, and Aboriginal communities of central Australia, where some adult seroprevalences exceed 40%.",
+    incubation="Decades. Myelopathy appears after years; leukaemia typically forty to sixty years after perinatal infection.",
+    diagnosis="Screening immunoassay, then a confirmatory line immunoassay or western blot with HTLV-1/2 discrimination, because HTLV-2 cross-reacts. Proviral load by quantitative PCR stratifies risk, and clonality studies establish ATL.",
+    management="No antiviral alters carriage. ATL is treated by subtype: watchful waiting for smouldering disease, zidovudine with interferon alfa for leukaemic forms, combination chemotherapy and allogeneic transplantation for aggressive lymphoma, and mogamulizumab where licensed. HAM/TSP has no disease-modifying treatment; corticosteroids give limited, temporary benefit.",
+    prevention="Avoiding breastfeeding by carrier mothers where safe alternatives exist, which is what cut transmission in Nagasaki; leucodepletion and donor screening of blood; condoms; not sharing injecting equipment. No vaccine.",
+    evidence=["Causation is settled: the provirus is clonally integrated in ATL cells, and IARC classifies HTLV-1 as a Group 1 human carcinogen. A 2020 systematic review and meta-analysis quantified the associated outcomes."],
+    refs=[{"label": "Association between HTLV-1 infection and adverse health outcomes: a systematic review and meta-analysis of epidemiological studies. Lancet Infect Dis 2020", "pmid": "31648940", "doi": "10.1016/s1473-3099(19)30402-5"},
+          {"label": "Seroprevalence and geographical distribution of human T-lymphotropic virus type 1. Virol J 2017", "pmid": "28137274", "doi": "10.1186/s12985-017-0691-y"}],
+)
+
+profile(
+    "Lentivirus humimdef2",
+    cycle="blood-sexual",
+    names=["human immunodeficiency virus 2 (HIV-2)"],
+    tier="established",
+    headline="A West African lentivirus from sooty mangabeys, less transmissible and slower to progress than HIV-1, and intrinsically resistant to two whole antiretroviral classes.",
+    syndrome="The same spectrum as HIV-1 — CD4 decline, opportunistic infection, AIDS — but with a longer asymptomatic phase and a substantial minority who never progress. Plasma viral loads are lower at any given CD4 count.",
+    transmission="Sexual contact, blood exposure and vertical transmission, each considerably less efficient than for HIV-1; mother-to-child transmission without intervention is a few per cent rather than a quarter.",
+    vectors=["None"],
+    reservoir="Humans; origin in SIVsmm from sooty mangabeys in West Africa, with at least nine independent cross-species transmissions of which only groups A and B spread.",
+    geography="West Africa, with the highest prevalences in Guinea-Bissau and Senegal, and cases in Portugal, France and India reflecting historic ties.",
+    incubation="Years, and progression to AIDS may not occur at all.",
+    diagnosis="Combination immunoassays detect both viruses; an HIV-1/HIV-2 differentiation assay is required, and this matters practically — HIV-1 viral load assays do not quantify HIV-2, so an HIV-2-specific RNA assay is needed for monitoring.",
+    management="Integrase inhibitors and boosted protease inhibitors with two NRTIs. The non-nucleoside class — efavirenz, nevirapine, rilpivirine, doravirine — has no activity against HIV-2 at all, nor does enfuvirtide, because of natural polymorphisms in reverse transcriptase and gp41. Trial evidence is far thinner than for HIV-1 and much of practice is extrapolated.",
+    prevention="As for HIV-1: pre- and post-exposure prophylaxis, condoms, harm reduction, and prevention of vertical transmission. Tenofovir-based PrEP is active.",
+    evidence=["Established since 1986, with virus isolation, sequencing and cohort follow-up in West Africa; the drug-resistance pattern is confirmed in vitro and clinically."],
+    refs=[{"label": "Geographic and Population Distributions of Human Immunodeficiency Virus (HIV)-1 and HIV-2 Circulating Subtypes. J Infect Dis 2023", "pmid": "37592824", "doi": "10.1093/infdis/jiad327"},
+          {"label": "Emergence of multiclass drug-resistance in HIV-2 in antiretroviral-treated individuals in Senegal. Clin Infect Dis 2009", "pmid": "19143530", "doi": "10.1086/595704"}],
+)
+
+profile(
+    "Orthohepadnavirus hominoidei",
+    cycle="blood-sexual",
+    names=["hepatitis B virus (HBV)"],
+    tier="established",
+    headline="254 million people live with chronic hepatitis B, and it is a vaccine-preventable cause of cirrhosis and liver cancer that treatment controls but does not cure.",
+    syndrome="Acute hepatitis, usually anicteric in children and symptomatic in adults, rarely fulminant. Chronicity depends almost entirely on the age at infection: about 90% of perinatal infections become chronic against under 5% of adult ones. Chronic infection moves through immune-tolerant, immune-active, inactive-carrier and reactivation phases towards cirrhosis and hepatocellular carcinoma, which can arise without cirrhosis because the virus integrates.",
+    transmission="Perinatal, percutaneous and sexual. The infectious dose is very low and the virus survives on surfaces for days, which is why household and nosocomial transmission occur without an obvious exposure.",
+    vectors=["None"],
+    reservoir="Humans; the genotypes trace human migration closely enough to be used as a marker of it.",
+    geography="Worldwide, with the highest prevalence in the WHO Western Pacific and African regions.",
+    incubation="60-150 days, averaging about 90.",
+    diagnosis="HBsAg with anti-HBc, IgM anti-HBc for acute infection, HBeAg and anti-HBe, and HBV DNA for phase and treatment decisions; quantitative HBsAg and genotype in specialist practice.",
+    management="Nucleos(t)ide analogues — tenofovir or entecavir — suppress replication and reduce cirrhosis and hepatocellular carcinoma, but rarely clear the infection, so treatment is usually lifelong. Pegylated interferon achieves functional cure in a minority. Surveillance for liver cancer continues regardless of suppression.",
+    prevention="Recombinant vaccine, with a birth dose within 24 hours the single most effective intervention; hepatitis B immune globulin with vaccine for infants of HBsAg-positive mothers; antiviral prophylaxis in pregnancy at high viral load; blood-donor screening and injection safety.",
+    evidence=["Among the best-established causal relationships in oncology: IARC Group 1, with cohort, molecular and vaccine-era incidence data all concordant. Taiwan's universal infant programme produced a measurable fall in childhood liver cancer."],
+    refs=[{"label": "Estimations of worldwide prevalence of chronic hepatitis B virus infection: a systematic review of data published between 1965 and 2013. Lancet 2015", "pmid": "26231459", "doi": "10.1016/s0140-6736(15)61412-x"},
+          {"label": "Hepatitis B virus infection — natural history and clinical consequences. N Engl J Med 2004", "pmid": "15014185", "doi": "10.1056/nejmra031087"}],
+)
+
+profile(
+    "Orthohepacivirus hominis",
+    cycle="blood-sexual",
+    names=["hepatitis C virus (HCV)"],
+    tier="established",
+    headline="Roughly 50 million chronic infections, and the only chronic viral infection of humans that a short course of oral tablets reliably cures.",
+    syndrome="Acute infection is asymptomatic in most and clears spontanously in about a quarter. The rest become chronic, with fibrosis progressing over decades to cirrhosis and hepatocellular carcinoma. Extrahepatic disease matters: mixed cryoglobulinaemia, membranoproliferative glomerulonephritis, porphyria cutanea tarda, and an excess of non-Hodgkin lymphoma.",
+    transmission="Percutaneous blood exposure above all — injecting drug use, unsafe injections and, historically, transfusion. Sexual transmission is inefficient except among men who have sex with men, particularly with HIV; vertical transmission is around 5%.",
+    vectors=["None"],
+    reservoir="Humans. The closest relatives are hepaciviruses of horses, bats and rodents; no animal reservoir maintains human infection.",
+    geography="Worldwide, with the highest burden in the WHO Eastern Mediterranean and European regions; Egypt's epidemic, created by mass parenteral antischistosomal therapy, was the largest ever recorded and has been largely treated away.",
+    incubation="2 weeks to 6 months, usually 6-9 weeks.",
+    diagnosis="Anti-HCV antibody, then HCV RNA to establish viraemia — antibody persists after cure, so RNA is what distinguishes current from past infection. Core antigen is an alternative where RNA is unavailable. Genotyping is now rarely needed.",
+    management="Pangenotypic direct-acting antivirals: sofosbuvir/velpatasvir or glecaprevir/pibrentasvir for 8-12 weeks, with sustained virological response above 95% including in compensated cirrhosis. Cure is durable and fibrosis regresses, but it confers no immunity, so reinfection is possible and surveillance continues in those with cirrhosis.",
+    prevention="No vaccine, and the diversity of E2 plus the absence of sterilising natural immunity make one hard. Prevention is harm reduction, needle and syringe programmes, blood and injection safety, and treatment as prevention.",
+    evidence=["Causation established by the 1989 cloning of the agent of non-A non-B hepatitis, confirmed by chimpanzee transmission, and reinforced by the fact that curing the infection changes the clinical course. IARC Group 1."],
+    refs=[{"label": "Oral Direct-Acting Agent Therapy for Hepatitis C Virus Infection: A Systematic Review. Ann Intern Med 2017", "pmid": "28319996", "doi": "10.7326/m16-2575"},
+          {"label": "Clinical outcomes in patients with chronic hepatitis C after direct-acting antiviral treatment: a prospective cohort study. Lancet 2019", "pmid": "30765123", "doi": "10.1016/s0140-6736(18)32111-1"}],
+)
+
+profile(
+    "Deltavirus italiense",
+    cycle="blood-sexual",
+    names=["hepatitis D virus genotype 1 (HDV-1)"],
+    tier="established",
+    headline="A satellite virus that cannot replicate without hepatitis B surface antigen, and the most aggressive form of chronic viral hepatitis there is.",
+    syndrome="Coinfection with hepatitis B produces a more severe acute hepatitis and a higher rate of fulminant failure. Superinfection of an established HBsAg carrier produces rapidly progressive chronic hepatitis: cirrhosis in a substantial minority within a decade, and a two- to sixfold excess of hepatocellular carcinoma over hepatitis B alone.",
+    transmission="As for hepatitis B — percutaneous and sexual. Perinatal transmission is uncommon, which is why the age distribution differs from hepatitis B's.",
+    vectors=["None"],
+    reservoir="People with hepatitis B. Nothing else can sustain it: the agent borrows HBsAg for its envelope and has no way into a cell without it.",
+    geography="Genotype 1 is the globally distributed genotype, across the Mediterranean basin, eastern Europe, the Middle East, and parts of Africa and the Americas.",
+    incubation="1-6 months, overlapping that of hepatitis B.",
+    diagnosis="Anti-HDV in anyone HBsAg-positive — WHO recommends reflex testing of all of them, because risk-based testing misses most cases — confirmed by HDV RNA. Quantitative RNA is poorly standardised between laboratories.",
+    management="Bulevirtide, an NTCP entry inhibitor, is licensed in the EU and achieved a combined virological and biochemical response in 45% at 48 weeks against 2% untreated. Pegylated interferon alfa has limited and poorly durable efficacy. Hepatitis B nucleos(t)ide analogues do nothing to HDV, which is a common and consequential misunderstanding.",
+    prevention="Hepatitis B vaccination prevents hepatitis D absolutely, since no HBsAg means no HDV. For those already HBsAg-positive there is no vaccine, and prevention is avoiding percutaneous and sexual exposure.",
+    evidence=["Established since 1977 as the delta antigen of Rizzetto, with the dependence on HBsAg demonstrated experimentally and the superinfection course documented in cohorts; bulevirtide's phase 3 trial is randomised evidence of benefit."],
+    refs=[{"label": "The global prevalence of hepatitis D virus infection: Systematic review and meta-analysis. J Hepatol 2020", "pmid": "32335166", "doi": "10.1016/j.jhep.2020.04.008"},
+          {"label": "A Phase 3, Randomized Trial of Bulevirtide in Chronic Hepatitis D. N Engl J Med 2023", "pmid": "37345876", "doi": "10.1056/nejmoa2213429"}],
+)
+
+profile(
+    "Paslahepevirus balayani",
+    cycle="faecal-oral",
+    names=["hepatitis E virus genotypes 1-4 (HEV)"],
+    tier="established",
+    headline="The commonest cause of acute viral hepatitis worldwide, and two diseases in one species: a waterborne epidemic hepatitis of low-income settings, and a zoonotic foodborne infection of high-income ones.",
+    syndrome="Self-limiting acute hepatitis in most. Three features set it apart: mortality of 20-25% in the third trimester of pregnancy with genotype 1, which no other hepatitis virus approaches; chronic infection with rapid fibrosis in the immunosuppressed, particularly solid-organ transplant recipients, with genotypes 3 and 4; and extrahepatic neurological disease, chiefly Guillain-Barré syndrome and neuralgic amyotrophy.",
+    transmission="Genotypes 1 and 2 are faecal-oral through contaminated water, causing large epidemics in camps and after floods. Genotypes 3 and 4 are zoonotic, acquired from undercooked pork, wild boar, deer meat and offal. Transfusion transmission is documented, and vertical transmission occurs with genotype 1.",
+    vectors=["None"],
+    reservoir="Humans for genotypes 1 and 2; domestic pigs, wild boar and deer for genotypes 3 and 4, with pigs seropositive across most of the world.",
+    geography="Worldwide. Genotype 1 predominates in Asia and Africa, genotype 2 in Mexico and West Africa, genotype 3 across Europe, the Americas and Japan, and genotype 4 in east Asia.",
+    incubation="2-10 weeks, averaging about 40 days.",
+    diagnosis="Anti-HEV IgM with IgG, and HEV RNA in blood or stool — RNA is essential in the immunosuppressed, in whom serology is unreliable, and is what defines chronicity at three months.",
+    management="Supportive for acute infection. For chronic genotype 3 infection, reducing immunosuppression clears about a third; ribavirin monotherapy for three months clears most of the rest. Pegylated interferon is used in liver-transplant recipients, avoided in other organs because of rejection risk.",
+    prevention="Safe water and sanitation for genotypes 1 and 2; thorough cooking of pork and game for 3 and 4. Hecolin, a recombinant vaccine, is licensed only in China, so no vaccine is available to travellers or to pregnant women in the settings where genotype 1 kills them.",
+    evidence=["Established by human volunteer transmission, molecular cloning in 1990, and extensive outbreak and cohort data; the EASL guideline summarises the clinical evidence base."],
+    refs=[{"label": "EASL Clinical Practice Guidelines on hepatitis E virus infection. J Hepatol 2018", "pmid": "29609832", "doi": "10.1016/j.jhep.2018.03.005"},
+          {"label": "The global epidemiology of hepatitis E virus infection: A systematic review and meta-analysis. Liver Int 2020", "pmid": "32281721", "doi": "10.1111/liv.14468"}],
+)
+
+profile(
+    "Hepatovirus ahepa",
+    cycle="faecal-oral",
+    names=["hepatitis A virus (HAV)"],
+    tier="established",
+    headline="A faecal-oral hepatitis that never becomes chronic, is entirely vaccine-preventable, and gets more dangerous the later in life it is acquired.",
+    syndrome="Abrupt fever, malaise, anorexia, nausea and right upper quadrant discomfort, then jaundice with dark urine and pale stools. Asymptomatic in most children under six, which is what sustains silent transmission. Prolonged cholestatic and relapsing courses occur; fulminant hepatic failure in well under 1%, concentrated in older adults and in those with chronic liver disease.",
+    transmission="Faecal-oral: person-to-person in households and childcare, and through contaminated water, shellfish, frozen berries and food handled by an infected person. Outbreaks occur among men who have sex with men, people who inject drugs and people experiencing homelessness, and the virus is shed at highest titre in the two weeks before jaundice.",
+    vectors=["None"],
+    reservoir="Humans, essentially exclusively; non-human primates can be infected but maintain nothing.",
+    geography="Worldwide, with the epidemiology inverted by sanitation: where it is poor almost everyone is infected in early childhood and disease is rare, and where sanitation improves infection is deferred to adulthood and outbreaks become severe.",
+    incubation="15-50 days, averaging 28.",
+    diagnosis="Anti-HAV IgM, which is detectable from the onset of symptoms and persists for three to six months; HAV RNA in outbreak investigation and to link cases to a food source.",
+    management="Supportive. No specific antiviral exists and none is needed in most cases; transplantation for the rare fulminant presentation.",
+    prevention="Inactivated vaccine, highly effective and long-lasting, given pre-exposure to travellers and risk groups and as post-exposure prophylaxis within 14 days — which works because the incubation period is longer than the immune response takes. Immune globulin for infants under one, the immunocompromised and those with chronic liver disease. Safe water, sanitation and food hygiene.",
+    evidence=["Established by human volunteer studies in the 1940s-60s, virus identification in 1973 and randomised vaccine trials; the post-exposure window is supported by trial evidence of vaccine non-inferiority to immune globulin."],
+    refs=[{"label": "Hepatitis A outbreak disproportionately affecting men who have sex with men (MSM) in the European Union and European Economic Area, June 2016 to May 2017. Euro Surveill 2018", "pmid": "30131095", "doi": "10.2807/1560-7917.es.2018.23.33.1700641"},
+          {"label": "WHO hepatitis A fact sheet", "url": "https://www.who.int/news-room/fact-sheets/detail/hepatitis-a"}],
+)
+
+profile(
+    "Orthopneumovirus hominis",
+    cycle="respiratory",
+    names=["human respiratory syncytial virus (RSV)"],
+    tier="established",
+    headline="The leading cause of infant bronchiolitis worldwide and a major cause of severe respiratory disease in older adults — and, after sixty years of failure, now preventable at both ends of life.",
+    syndrome="In infants, coryza then bronchiolitis: tachypnoea, wheeze, crackles, feeding difficulty and apnoea in the very young, with the first infection the most severe. Almost everyone is infected by the age of two. In older adults and the immunosuppressed it causes pneumonia and exacerbations of COPD and heart failure, with mortality comparable to influenza. Reinfection throughout life is the rule because immunity is incomplete.",
+    transmission="Large respiratory droplets and contaminated hands and surfaces, on which it survives for hours — hand hygiene matters more than for most respiratory viruses. Highly seasonal in temperate climates, with the pattern disrupted and then restored after the COVID-19 pandemic.",
+    vectors=["None"],
+    reservoir="Humans.",
+    geography="Worldwide, with winter epidemics in temperate regions and rainy-season peaks in the tropics.",
+    incubation="4-6 days.",
+    diagnosis="RT-PCR on a nasopharyngeal specimen, usually in a multiplex respiratory panel; rapid antigen tests are sensitive enough in infants, whose viral loads are high, but not in adults.",
+    management="Supportive: oxygen, fluids and respiratory support. Bronchodilators, corticosteroids, antibiotics and chest physiotherapy do not help bronchiolitis and all have been shown not to; high-flow nasal oxygen reduces escalation of care. Ribavirin is of marginal benefit and rarely used.",
+    prevention="Nirsevimab, a single-dose long-acting monoclonal antibody, for infants, and palivizumab monthly where nirsevimab is unavailable; maternal immunisation with Abrysvo in pregnancy as the alternative route to the same protection; and Arexvy, Abrysvo or mResvia for older adults. All of them target the prefusion conformation of the F protein, the stabilisation of which is what unlocked the field.",
+    evidence=["Isolated in 1956 and causally established by decades of cohort and challenge data; the preventive interventions rest on randomised trials — MELODY for nirsevimab, IMpact-RSV for palivizumab, and the adult vaccine trials. The 1960s formalin-inactivated vaccine, which caused enhanced disease, is the reason the field moved so cautiously for so long."],
+    refs=[{"label": "Global, regional, and national disease burden estimates of acute lower respiratory infections due to respiratory syncytial virus in children younger than 5 years in 2019: a systematic analysis. Lancet 2022", "pmid": "35598608", "doi": "10.1016/s0140-6736(22)00478-0"},
+          {"label": "The burden of respiratory syncytial virus infection in young children. N Engl J Med 2009", "pmid": "19196675", "doi": "10.1056/nejmoa0804877"}],
+)
+
+
 TAXON_NOTES = {
     "Peribunyaviridae": (
         "Tri-segmented negative-sense RNA viruses (L, M, S). The segmented genome "
@@ -1793,9 +1979,18 @@ TIERS = {
     "no-evidence": {
         "label": "No human evidence",
         "rank": 4,
-        "note": "No reported human infection, and a host range that does not "
-                "include vertebrates. This is a claim about the evidence, not "
-                "an absence of it.",
+        # The host-range clause used to be part of this definition, which
+        # left nowhere to put a vertebrate virus nobody has been infected
+        # by -- Lloviu, Gannoruwa bat lyssavirus, red deerpox -- so those
+        # sat under "possible", claiming serological evidence of human
+        # exposure that does not exist. `basis` already records how the
+        # tier was arrived at, so the tier does not need to.
+        "note": "No reported human infection. For almost all of the "
+                "species here that is because the host range does not "
+                "include vertebrates at all, and `basis` says so; for a "
+                "handful it is a vertebrate virus nobody has been "
+                "infected by. Either way this is a claim about the "
+                "evidence, not an absence of one.",
     },
     # The weakest tier is the honest default. Before this existed every
     # unprofiled species was labelled "no human evidence", which asserted a
