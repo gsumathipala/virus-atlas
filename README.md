@@ -526,7 +526,7 @@ human case ever reported, and saying so is different from either hiding the
 finding or implying a human risk.
 
 Every therapeutic claim carries a PMID, and all of them are machine-verified
-against Europe PMC by `python -m atlas.update --check-refs` — 118 citations
+against Europe PMC by `python -m atlas.update --check-refs` — 133 citations
 across the therapeutics and profile layers, every one resolving to the title
 stored beside it. This check exists
 because the first draft of that layer used recalled identifiers and most of
